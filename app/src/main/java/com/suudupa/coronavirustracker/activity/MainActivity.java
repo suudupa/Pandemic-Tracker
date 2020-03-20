@@ -1,4 +1,4 @@
-package com.suudupa.coronavirustracker;
+package com.suudupa.coronavirustracker.Activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.suudupa.coronavirustracker.R;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String HOMEPAGE_URL = "https://www.worldometers.info/coronavirus/";
     public static final String OUTBREAK_DATA = ".maincounter-number";
     public static final String REGION_URL = "https://www.worldometers.info/coronavirus/#countries";
-    public static final String REGION_DATA_TABLE = "main_table_countries_today";
 
     public static final int CASES_COL = 1;
     public static final int DEATHS_COL = 3;
@@ -35,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView deathsTextView;
     private TextView recoveredTextView;
 
-    private Spinner regionList;
+    public Spinner regionList;
+    private SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +52,9 @@ public class MainActivity extends AppCompatActivity {
         new RetrieveGlobalDataTask().execute(HOMEPAGE_URL, OUTBREAK_DATA);
 
         regionList = findViewById(R.id.regionListSpinner);
-        regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedRegion = parent.getItemAtPosition(position).toString();
                 switch (selectedRegion) {
                     case "Global":
@@ -67,9 +68,17 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
                 return;
+            }
+        });
+
+        swipeRefresh = findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData(regionList.getSelectedItem().toString());
+                swipeRefresh.setRefreshing(false);
             }
         });
     }
@@ -117,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 Document rgnPage = Jsoup.connect(url).get();
-                Element rgn = rgnPage.select("tr:contains("+rgnName+")").get(0);
+                Element rgn = rgnPage.select("tr:contains(" + rgnName + ")").get(0);
 
                 if (rgn != null) {
                     Elements data = rgn.select("td");
@@ -141,6 +150,18 @@ public class MainActivity extends AppCompatActivity {
             deathsTextView.setText(numDeaths);
             recoveredTextView.setText(numRecovered);
             super.onPostExecute(aVoid);
+        }
+    }
+
+    private void refreshData(String region) {
+        switch (region) {
+            case "Global":
+                new RetrieveGlobalDataTask().execute(HOMEPAGE_URL, OUTBREAK_DATA);
+                break;
+
+            default:
+                new RetrieveRegionDataTask().execute(REGION_URL, region);
+                break;
         }
     }
 }
