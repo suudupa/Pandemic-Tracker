@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Coronavirus Tracker</string>
-    <string name="main_banner">COVID-19 CORONAVIRUS OUTBREAK</string>
+    <string name="app_name">COVID-19 Tracker</string>
 
     <string name="cases">Coronavirus Cases:</string>
     <string name="deaths">Deaths:</string>
