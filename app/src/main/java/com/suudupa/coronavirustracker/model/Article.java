@@ -19,7 +19,7 @@ public class Article {
     @SerializedName("url")
     private String url;
 
-    @SerializedName(“urlToImage”)
+    @SerializedName("urlToImage")
     private String urlToImage;
 
     @SerializedName("publishedAt")
