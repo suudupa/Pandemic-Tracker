@@ -1,4 +1,4 @@
-package com.suudupa.coronavirustracker.Activity;
+package com.suudupa.coronavirustracker.activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
