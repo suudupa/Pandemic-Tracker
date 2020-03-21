@@ -1,6 +1,5 @@
 package com.suudupa.coronavirustracker.activity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,156 +10,74 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.suudupa.coronavirustracker.R;
+import com.suudupa.coronavirustracker.asyncTask.RetrieveGlobalData;
+import com.suudupa.coronavirustracker.asyncTask.RetrieveRegionData;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
+import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
+import static com.suudupa.coronavirustracker.utility.Resources.HOMEPAGE_URL;
+import static com.suudupa.coronavirustracker.utility.Resources.OUTBREAK_DATA;
+import static com.suudupa.coronavirustracker.utility.Resources.REGION_URL;
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final String HOMEPAGE_URL = "https://www.worldometers.info/coronavirus/";
-    public static final String OUTBREAK_DATA = ".maincounter-number";
-    public static final String REGION_URL = "https://www.worldometers.info/coronavirus/#countries";
-
-    public static final int CASES_COL = 1;
-    public static final int DEATHS_COL = 3;
-    public static final int RECOVERED_COL = 5;
 
     public String numCases = "0";
     public String numDeaths = "0";
     public String numRecovered = "0";
 
-    private TextView casesTextView;
-    private TextView deathsTextView;
-    private TextView recoveredTextView;
+    public TextView casesTextView;
+    public TextView deathsTextView;
+    public TextView recoveredTextView;
 
-    public Spinner regionList;
+    private Spinner regionList;
     private SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initializeView();
 
-        casesTextView = findViewById(R.id.casesTextView);
-        deathsTextView = findViewById(R.id.deathsTextView);
-        recoveredTextView = findViewById(R.id.recoveredTextView);
+        new RetrieveGlobalData().execute(HOMEPAGE_URL, OUTBREAK_DATA, this);
 
-        new RetrieveGlobalDataTask().execute(HOMEPAGE_URL, OUTBREAK_DATA);
-
-        regionList = findViewById(R.id.regionListSpinner);
         regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedRegion = parent.getItemAtPosition(position).toString();
-                switch (selectedRegion) {
-                    case "Global":
-                        new RetrieveGlobalDataTask().execute(HOMEPAGE_URL, OUTBREAK_DATA);
-                        break;
-
-                    default:
-                        new RetrieveRegionDataTask().execute(REGION_URL, selectedRegion);
-                        break;
-                }
+                retrieveData(selectedRegion);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                return;
-            }
+            public void onNothingSelected(AdapterView<?> parent) { return; }
         });
 
-        swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
             @Override
             public void onRefresh() {
-                refreshData(regionList.getSelectedItem().toString());
+                String selectedRegion = regionList.getSelectedItem().toString();
+                retrieveData(selectedRegion);
                 swipeRefresh.setRefreshing(false);
             }
         });
     }
 
-    private class RetrieveGlobalDataTask extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... urls) {
-
-            String url = urls[0];
-            String id = urls[1];
-
-            try {
-                Document homepage = Jsoup.connect(url).get();
-                Elements results = homepage.select(id);
-
-                if (results != null && results.size() > 0) {
-                    numCases = results.get(0).text();
-                    numDeaths = results.get(1).text();
-                    numRecovered = results.get(2).text();
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            casesTextView.setText(numCases);
-            deathsTextView.setText(numDeaths);
-            recoveredTextView.setText(numRecovered);
-            super.onPostExecute(aVoid);
-        }
+    private void initializeView() {
+        casesTextView = findViewById(R.id.casesTextView);
+        deathsTextView = findViewById(R.id.deathsTextView);
+        recoveredTextView = findViewById(R.id.recoveredTextView);
+        regionList = findViewById(R.id.regionListSpinner);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
     }
 
-    private class RetrieveRegionDataTask extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... urls) {
-
-            String url = urls[0];
-            String rgnName = urls[1];
-
-            try {
-                Document rgnPage = Jsoup.connect(url).get();
-                Element rgn = rgnPage.select("tr:contains(" + rgnName + ")").get(0);
-
-                if (rgn != null) {
-                    Elements data = rgn.select("td");
-
-                    if (data != null && data.size() > 0) {
-                        numCases = data.get(CASES_COL).text();
-                        numDeaths = data.get(DEATHS_COL).text();
-                        numRecovered = data.get(RECOVERED_COL).text();
-                    }
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            casesTextView.setText(numCases);
-            deathsTextView.setText(numDeaths);
-            recoveredTextView.setText(numRecovered);
-            super.onPostExecute(aVoid);
-        }
-    }
-
-    private void refreshData(String region) {
+    private void retrieveData(String region) {
         switch (region) {
-            case "Global":
-                new RetrieveGlobalDataTask().execute(HOMEPAGE_URL, OUTBREAK_DATA);
+            case GLOBAL:
+                new RetrieveGlobalData().execute(HOMEPAGE_URL, OUTBREAK_DATA, this);
                 break;
-
             default:
-                new RetrieveRegionDataTask().execute(REGION_URL, region);
+                new RetrieveRegionData().execute(REGION_URL, region, this);
                 break;
         }
     }
