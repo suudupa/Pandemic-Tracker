@@ -52,6 +52,8 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         Article article = articles.get(position);
 
         RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(Utils.getRandomColorDrawable());
+        requestOptions.error(Utils.getRandomColorDrawable());
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
         requestOptions.centerCrop();
 
