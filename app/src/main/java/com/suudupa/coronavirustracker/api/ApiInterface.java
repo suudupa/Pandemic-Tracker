@@ -9,12 +9,23 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
     @GET("top-headlines")
-
     Call<ArticleList> getTopHeadlines(
+
             @Query("q") String keyword,
             @Query("country") String country,
             @Query("sortBy") String sortBy,
-            @Query("apiKey") String apiKey);
+            @Query("apiKey") String apiKey
 
-    //getEverything{}
+    );
+
+    @GET("everything")
+    Call<ArticleList> getEverything(
+
+            @Query("q") String keywords,
+            @Query("country") String country,
+            @Query("from") String from,
+            @Query("sortBy") String sortBy,
+            @Query("apiKey") String apiKey
+
+    );
 }

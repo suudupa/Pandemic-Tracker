@@ -9,8 +9,8 @@ public class ArticleList {
     @SerializedName("status")
     private String status;
 
-    @SerializedName("articleCount")
-    private int articleCount;
+    @SerializedName("totalResults")
+    private int totalResults;
 
     @SerializedName("articles")
     private List<Article> articles = null;
@@ -23,12 +23,12 @@ public class ArticleList {
         this.status = status;
     }
 
-    public int getArticleCount() {
-        return articleCount;
+    public int gettotalResults() {
+        return totalResults;
     }
 
-    public void setArticleCount(int articleCount) {
-        this.articleCount = articleCount;
+    public void settotalResults(int articleCount) {
+        this.totalResults = articleCount;
     }
 
     public List<Article> getArticles() {
