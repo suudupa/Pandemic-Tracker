@@ -101,7 +101,7 @@
                 android:id="@+id/title" />
 
             <TextView
-                android:id="@+id/desc"
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/title"
@@ -115,7 +115,7 @@
                 android:id="@+id/source"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:layout_below="@id/desc"
+                android:layout_below="@id/description"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginBottom="10dp"
@@ -131,7 +131,7 @@
                 android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:layout_below="@id/desc"
+                android:layout_below="@id/description"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_toRightOf="@id/source"
