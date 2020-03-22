@@ -36,6 +36,12 @@ public class Utils {
         return locale.getCountry().toLowerCase();
     }
 
+    public static String getDate() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        return simpleDateFormat.format(date);
+    }
+
     public static String formatDate (String dateString) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("E, d MMM yyyy", new Locale(getCountry()));
         try {
