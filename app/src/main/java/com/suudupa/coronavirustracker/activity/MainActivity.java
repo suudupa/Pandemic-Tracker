@@ -1,12 +1,18 @@
 package com.suudupa.coronavirustracker.activity;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -155,6 +161,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     recyclerView.setAdapter(articleListAdapter);
                     articleListAdapter.notifyDataSetChanged();
 
+                    articleSelectedListener();
+
                     topHeadlinesTextView.setVisibility(View.VISIBLE);
                     swipeRefresh.setRefreshing(false);
                 }
@@ -178,6 +186,40 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e.getCause());
         }
+    }
+
+    private void articleSelectedListener() {
+
+        articleListAdapter.setOnItemClickListener(new ArticleListAdapter.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(View view, int position) {
+
+                ImageView imageView = view.findViewById(R.id.img);
+                Article article = articles.get(position);
+
+                Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
+                intent.putExtra("url", article.getUrl());
+                intent.putExtra("title", article.getTitle());
+                intent.putExtra("img",  article.getUrlToImage());
+                intent.putExtra("date",  article.getPublishedAt());
+                intent.putExtra("source",  article.getSource().getName());
+                intent.putExtra("author",  article.getAuthor());
+
+                Pair<View, String> pair = Pair.create((View)imageView, ViewCompat.getTransitionName(imageView));
+                ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        MainActivity.this,
+                        pair
+                );
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    startActivity(intent, activityOptionsCompat.toBundle());
+                }
+                else {
+                    startActivity(intent);
+                }
+            }
+        });
     }
 }
 
