@@ -1,22 +1,12 @@
 package com.suudupa.coronavirustracker.activity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.util.Pair;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.adapter.ArticleListAdapter;
@@ -33,6 +23,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private Spinner regionList;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
 
@@ -84,7 +78,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { return; }
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
     }
 
@@ -98,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
         regionList = findViewById(R.id.regionListSpinner);
         recyclerView = findViewById(R.id.recyclerView);
-        layoutManager = new LinearLayoutManager(MainActivity.this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
@@ -115,17 +111,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void retrieveData(String region) {
-        switch (region) {
-            case GLOBAL:
-                new RetrieveGlobalData().execute(HOMEPAGE_URL, OUTBREAK_DATA, this);
-                break;
-            default:
-                new RetrieveRegionData().execute(REGION_URL, region, this);
-                break;
+        if (region.equals(GLOBAL)) {
+            new RetrieveGlobalData().execute(HOMEPAGE_URL, OUTBREAK_DATA, this);
+        } else {
+            new RetrieveRegionData().execute(REGION_URL, region, this);
         }
     }
 
-    public void loadArticles(String region){
+    public void loadArticles(String region) {
 
         swipeRefresh.setRefreshing(true);
 
@@ -133,15 +126,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         String q;
-        switch (region) {
-            case GLOBAL:
-                q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
-                break;
-            default:
-                q = urlEncode(KEYWORD_1 + AND_OP + region);
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
-                break;
+        if (region.equals(GLOBAL)) {
+            q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
+            articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+        } else {
+            q = urlEncode(KEYWORD_1 + AND_OP + region);
+            articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
         }
 
         articleListCall.enqueue(new Callback<ArticleList>() {
@@ -165,8 +155,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     topHeadlinesTextView.setVisibility(View.VISIBLE);
                     swipeRefresh.setRefreshing(false);
-                }
-                else {
+                } else {
                     topHeadlinesTextView.setVisibility(View.INVISIBLE);
                     swipeRefresh.setRefreshing(false);
                 }
@@ -201,23 +190,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                 intent.putExtra("url", article.getUrl());
                 intent.putExtra("title", article.getTitle());
-                intent.putExtra("img",  article.getUrlToImage());
-                intent.putExtra("date",  article.getPublishedAt());
-                intent.putExtra("source",  article.getSource().getName());
-                intent.putExtra("author",  article.getAuthor());
+                intent.putExtra("img", article.getUrlToImage());
+                intent.putExtra("date", article.getPublishedAt());
+                intent.putExtra("source", article.getSource().getName());
+                intent.putExtra("author", article.getAuthor());
 
-                Pair<View, String> pair = Pair.create((View)imageView, ViewCompat.getTransitionName(imageView));
-                ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        MainActivity.this,
-                        pair
-                );
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    startActivity(intent, activityOptionsCompat.toBundle());
-                }
-                else {
-                    startActivity(intent);
-                }
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);
+
+
             }
         });
     }

@@ -1,38 +1,23 @@
 package com.suudupa.coronavirustracker.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.suudupa.coronavirustracker.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.suudupa.coronavirustracker.R;
-import com.suudupa.coronavirustracker.utility.Utils;
+public class ArticleActivity extends AppCompatActivity {
 
-public class ArticleActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
 
-    private AppBarLayout appBarLayout;
-    private Toolbar toolbar;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
-    private LinearLayout titleAppbar;
-    private FrameLayout date_behavior;
-    private ImageView imageView;
-    private TextView appbar_title, appbar_subtitle, title, date, time;
+    private TextView appbar_title, appbar_subtitle;
 
-    private boolean isToolbarViewHidden = false;
-    private String mUrl, mImg, mTitle, mDate, mSource, mAuthor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,63 +28,33 @@ public class ArticleActivity extends AppCompatActivity implements AppBarLayout.O
         initView();
 
         Intent intent = getIntent();
-        mUrl = intent.getStringExtra("url");
-        mImg = intent.getStringExtra("img");
-        mTitle = intent.getStringExtra("title");
-        mDate = intent.getStringExtra("date");
-        mSource = intent.getStringExtra("source");
-        mAuthor = intent.getStringExtra("author");
-
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.error(Utils.getRandomColorDrawable());
-
-        Glide.with(this)
-                .load(mImg)
-                .apply(requestOptions)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imageView);
+        String mUrl = intent.getStringExtra("url");
+        String mSource = intent.getStringExtra("source");
 
         appbar_title.setText(mSource);
         appbar_subtitle.setText(mUrl);
-        date.setText(Utils.formatDate(mDate));
-        title.setText(mTitle);
 
-        String author;
-        if (mAuthor != null){
-            author = " \u2022 " + mAuthor;
-        } else {
-            author = "";
-        }
-
-        time.setText(mSource + author + " \u2022 " + Utils.formatDateTime(mDate));
 
         initWebView(mUrl);
     }
 
     private void initView() {
 
-        appBarLayout = findViewById(R.id.appbar);
-        appBarLayout.addOnOffsetChangedListener(this);
-
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else
+            System.out.println("NO TOOLBAR");
 
-        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setTitle("");
-
-        date_behavior = findViewById(R.id.date_behavior);
-        titleAppbar = findViewById(R.id.title_appbar);
-        imageView = findViewById(R.id.backdrop);
         appbar_title = findViewById(R.id.title_on_appbar);
         appbar_subtitle = findViewById(R.id.subtitle_on_appbar);
-        date = findViewById(R.id.date);
-        time = findViewById(R.id.time);
-        title = findViewById(R.id.title);
     }
 
-    private void initWebView(String url){
+    @SuppressLint("SetJavaScriptEnabled")
+    private void initWebView(String url) {
+        url = url.replace("http:", "https:");
         WebView webView = findViewById(R.id.webView);
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -123,22 +78,9 @@ public class ArticleActivity extends AppCompatActivity implements AppBarLayout.O
         onBackPressed();
         return true;
     }
-
     @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
-        int maxScroll = appBarLayout.getTotalScrollRange();
-        float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
-
-        if (percentage == 1f && isToolbarViewHidden) {
-            date_behavior.setVisibility(View.GONE);
-            titleAppbar.setVisibility(View.VISIBLE);
-            isToolbarViewHidden = !isToolbarViewHidden;
-        }
-        else if (percentage < 1f && !isToolbarViewHidden) {
-            date_behavior.setVisibility(View.VISIBLE);
-            titleAppbar.setVisibility(View.GONE);
-            isToolbarViewHidden = !isToolbarViewHidden;
-        }
+    public void finish() {
+        super.finish();
+        overridePendingTransition(android.R.anim.fade_in, R.anim.slide_out);
     }
 }
