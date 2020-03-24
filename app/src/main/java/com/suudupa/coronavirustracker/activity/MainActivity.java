@@ -8,6 +8,12 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.adapter.ArticleListAdapter;
 import com.suudupa.coronavirustracker.api.ApiClient;
@@ -23,11 +29,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -195,14 +196,25 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 intent.putExtra("source", article.getSource().getName());
                 intent.putExtra("author", article.getAuthor());
 
-
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);
-
-
             }
         });
     }
+
+    public void setToZeroIfEmpty() {
+        if (isZero(numCases)) {
+            numCases = "0";
+        }
+        if (isZero(numDeaths)) {
+            numDeaths = "0";
+        }
+        if (isZero(numRecovered)) {
+            numRecovered = "0";
+        }
+    }
+
+    private boolean isZero(String cases) {
+        return cases.trim().isEmpty();
+    }
 }
-
-

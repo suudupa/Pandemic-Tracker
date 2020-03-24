@@ -29,6 +29,7 @@ public class RetrieveGlobalData extends AsyncTask<Object, Void, Void> {
                 mainActivityContext.numCases = results.get(0).text();
                 mainActivityContext.numDeaths = results.get(1).text();
                 mainActivityContext.numRecovered = results.get(2).text();
+                mainActivityContext.setToZeroIfEmpty();
             }
 
         } catch (IOException e) {

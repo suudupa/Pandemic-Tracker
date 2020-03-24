@@ -37,6 +37,7 @@ public class RetrieveRegionData extends AsyncTask<Object, Void, Void> {
                     mainActivityContext.numCases = rgnData.get(CASES_COL).text();
                     mainActivityContext.numDeaths = rgnData.get(DEATHS_COL).text();
                     mainActivityContext.numRecovered = rgnData.get(RECOVERED_COL).text();
+                    mainActivityContext.setToZeroIfEmpty();
                 }
             }
 
