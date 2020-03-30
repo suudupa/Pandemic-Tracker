@@ -39,6 +39,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 import static com.suudupa.coronavirustracker.utility.Resources.HOMEPAGE_URL;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
+import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
 import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.OUTBREAK_DATA;
 import static com.suudupa.coronavirustracker.utility.Resources.REGION_URL;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         swipeRefresh.setRefreshing(true);
 
-        Call<ArticleList> articleListCall;
+        final Call<ArticleList> articleListCall;
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         String q;
@@ -148,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     articles = response.body().getArticles();
 
+                    if (articles.size() < MIN_ARTICLES) {
+                        loadArticles(GLOBAL);
+                    }
+
                     articleListAdapter = new ArticleListAdapter(articles, MainActivity.this);
                     recyclerView.setAdapter(articleListAdapter);
                     articleListAdapter.notifyDataSetChanged();
@@ -156,7 +161,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     topHeadlinesTextView.setVisibility(View.VISIBLE);
                     swipeRefresh.setRefreshing(false);
-                } else {
+                }
+                else {
                     topHeadlinesTextView.setVisibility(View.INVISIBLE);
                     swipeRefresh.setRefreshing(false);
                 }
@@ -165,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void onFailure(Call<ArticleList> call, Throwable t) {
                 topHeadlinesTextView.setVisibility(View.INVISIBLE);
+                //error layout
                 swipeRefresh.setRefreshing(false);
             }
         });

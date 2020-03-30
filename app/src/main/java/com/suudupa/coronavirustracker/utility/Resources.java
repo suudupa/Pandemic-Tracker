@@ -16,4 +16,5 @@ public class Resources {
     public static final int CASES_COL = 1;
     public static final int DEATHS_COL = 3;
     public static final int RECOVERED_COL = 5;
+    public static final int MIN_ARTICLES = 1;
 }
