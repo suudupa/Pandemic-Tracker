@@ -8,20 +8,19 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
-import com.suudupa.coronavirustracker.R;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.suudupa.coronavirustracker.R;
+
 public class ArticleActivity extends AppCompatActivity {
 
-
     private TextView appbar_title, appbar_subtitle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.article_layout);
 
@@ -33,7 +32,6 @@ public class ArticleActivity extends AppCompatActivity {
 
         appbar_title.setText(mSource);
         appbar_subtitle.setText(mUrl);
-
 
         initWebView(mUrl);
     }

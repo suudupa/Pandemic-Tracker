@@ -15,6 +15,5 @@ public interface ApiInterface {
             @Query("from") String from,
             @Query("sortBy") String sortBy,
             @Query("apiKey") String apiKey
-
     );
 }
