@@ -22,7 +22,7 @@ public class ArticleActivity extends AppCompatActivity {
 
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.article_layout);
+        setContentView(R.layout.activity_article);
 
         initView();
 
