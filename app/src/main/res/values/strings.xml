@@ -1,5 +1,18 @@
 <resources>
-    <string name="app_name">COVID-19 Tracker</string>
+    <string name="app_name">Pandemic Tracker</string>
+    <string name="headlinesTitle">Top Headlines</string>
+    <string name="settingsTitle">Settings</string>
+    <string name="aboutTitle">About</string>
+    <string name="contributorsTitle">Contributors</string>
+    <string name="enableDarkModeTitle">Use Dark Mode</string>
+    <string name="enableDarkModeKey">enableDarkMode</string>
+
+    <string name="aboutText">"TODO"</string>
+    <string name="contributorsText">"TODO"</string>
+    <string name="enableDarkModeText">Switch to Dark Mode for browsing and reading.</string>
+
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
 
     <string name="cases">Coronavirus Cases:</string>
     <string name="deaths">Deaths:</string>
