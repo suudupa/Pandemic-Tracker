@@ -2,17 +2,22 @@ package com.suudupa.coronavirustracker.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.navigation.NavigationView;
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.adapter.ArticleListAdapter;
 import com.suudupa.coronavirustracker.api.ApiClient;
@@ -44,7 +49,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.OUTBREAK_DATA;
 import static com.suudupa.coronavirustracker.utility.Resources.REGION_URL;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
     public String numCases = "0";
     public String numDeaths = "0";
@@ -55,8 +60,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public TextView recoveredTextView;
     private TextView topHeadlinesTextView;
 
-    private Spinner regionList;
     private SwipeRefreshLayout swipeRefresh;
+    private DrawerLayout drawer;
+    private Spinner regionList;
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
@@ -68,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeView();
+        setupDrawer();
 
         loadData(GLOBAL);
 
@@ -100,6 +107,37 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
+    }
+
+    private void setupDrawer() {
+        drawer = findViewById(R.id.drawerLayout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = findViewById(R.id.navigationView);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.settingsScreen) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
