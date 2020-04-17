@@ -60,8 +60,6 @@
                     android:layout_width="320dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="24dp"
-                    android:entries="@array/region_list"
-                    android:prompt="@string/region_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
