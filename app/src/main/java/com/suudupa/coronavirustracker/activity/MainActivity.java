@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -22,16 +23,22 @@ import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.adapter.ArticleListAdapter;
 import com.suudupa.coronavirustracker.api.ApiClient;
 import com.suudupa.coronavirustracker.api.ApiInterface;
-import com.suudupa.coronavirustracker.asyncTask.RetrieveGlobalData;
-import com.suudupa.coronavirustracker.asyncTask.RetrieveRegionData;
+import com.suudupa.coronavirustracker.asyncTask.JsonResponse;
 import com.suudupa.coronavirustracker.model.Article;
 import com.suudupa.coronavirustracker.model.ArticleList;
 import com.suudupa.coronavirustracker.utility.Utils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,21 +46,26 @@ import retrofit2.Response;
 
 import static com.suudupa.coronavirustracker.utility.Resources.AND_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.API_KEY;
+import static com.suudupa.coronavirustracker.utility.Resources.CASES;
+import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
+import static com.suudupa.coronavirustracker.utility.Resources.DEATHS;
 import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
-import static com.suudupa.coronavirustracker.utility.Resources.HOMEPAGE_URL;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
 import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
 import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
-import static com.suudupa.coronavirustracker.utility.Resources.OUTBREAK_DATA;
-import static com.suudupa.coronavirustracker.utility.Resources.REGION_URL;
+import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
-    public String numCases = "0";
-    public String numDeaths = "0";
-    public String numRecovered = "0";
+    public JSONObject jsonResponse;
+    public JSONArray jsonRegions;
+    private Map<String, JSONObject> pandemicData = new HashMap<>();
+
+    public String numCases = "";
+    public String numDeaths = "";
+    public String numRecovered = "";
 
     public TextView casesTextView;
     public TextView deathsTextView;
@@ -63,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private SwipeRefreshLayout swipeRefresh;
     private DrawerLayout drawer;
     private Spinner regionList;
+    private List<String> regions = new ArrayList<>();
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
@@ -76,14 +89,27 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         initializeView();
         setupDrawer();
 
-        loadData(GLOBAL);
+        try {
+            buildHashMap();
+            loadData(GLOBAL);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedRegion = parent.getItemAtPosition(position).toString();
-                loadData(selectedRegion);
+                try {
+                    loadData(selectedRegion);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -120,13 +146,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.settingsScreen) {
+       if (item.getItemId() == R.id.settingsScreen) {
             startActivity(new Intent(this, SettingsActivity.class));
-        }
-
+       }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -140,22 +162,56 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    @Override
-    public void onRefresh() {
-        loadData(regionList.getSelectedItem().toString());
+    private void buildHashMap() throws ExecutionException, InterruptedException {
+        new JsonResponse().execute(DATA_URL, this).get();
+        JSONArray jsonNames = jsonResponse.names();
+        for (int i = 0; i < jsonNames.length() - 1; i++) {
+            try {
+                String region = jsonNames.getString(i);
+                pandemicData.put(region, jsonResponse.getJSONObject(region));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        setupSpinner();
     }
 
-    private void loadData(String region) {
+    private void setupSpinner() {
+        regions = new ArrayList<>(pandemicData.keySet());
+        ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions);
+        regionList.setAdapter(dynamicRegionList);
+    }
+
+    @Override
+    public void onRefresh() {
+        String selectedRegion = regionList.getSelectedItem().toString();
+        try {
+            loadData(selectedRegion);
+            buildHashMap();
+            setupSpinner();
+            regionList.setPrompt(selectedRegion);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadData(String region) throws JSONException {
         retrieveData(region);
         loadArticles(region);
     }
 
-    private void retrieveData(String region) {
-        if (region.equals(GLOBAL)) {
-            new RetrieveGlobalData().execute(HOMEPAGE_URL, OUTBREAK_DATA, this);
-        } else {
-            new RetrieveRegionData().execute(REGION_URL, region, this);
-        }
+    private void retrieveData(String name) throws JSONException {
+        JSONObject region = pandemicData.get(name);
+        numCases = region.getString(CASES);
+        numDeaths = region.getString(DEATHS);
+        numRecovered = region.getString(RECOVERED);
+        casesTextView.setText(numCases);
+        deathsTextView.setText(numDeaths);
+        recoveredTextView.setText(numRecovered);
     }
 
     public void loadArticles(String region) {
@@ -244,21 +300,5 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);
             }
         });
-    }
-
-    public void setToZeroIfEmpty() {
-        if (isZero(numCases)) {
-            numCases = "0";
-        }
-        if (isZero(numDeaths)) {
-            numDeaths = "0";
-        }
-        if (isZero(numRecovered)) {
-            numRecovered = "0";
-        }
-    }
-
-    private boolean isZero(String cases) {
-        return cases.trim().isEmpty();
     }
 }

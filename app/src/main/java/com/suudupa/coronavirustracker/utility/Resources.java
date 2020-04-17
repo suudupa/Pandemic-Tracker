@@ -2,10 +2,11 @@ package com.suudupa.coronavirustracker.utility;
 
 public class Resources {
 
-    public static final String HOMEPAGE_URL = "https://www.worldometers.info/coronavirus/";
-    public static final String OUTBREAK_DATA = ".maincounter-number";
-    public static final String GLOBAL = "Global";
-    public static final String REGION_URL = "https://www.worldometers.info/coronavirus/#countries";
+    public static final String DATA_URL = "https://pandemictracker.rahulkaranth.com/covid19data.json";
+    public static final String GLOBAL = "World";
+    public static final String CASES = "cases";
+    public static final String DEATHS = "deaths";
+    public static final String RECOVERED = "recovered";
     public static final String API_KEY = "8adc6c6586d44ce49ee3a170649ec33b";
     public static final String KEYWORD_1 = "coronavirus";
     public static final String KEYWORD_2 = "covid-19";
@@ -13,8 +14,5 @@ public class Resources {
     public static final String AND_OP = " AND ";
     public static final String SORT_BY = "relevancy";
 
-    public static final int CASES_COL = 1;
-    public static final int DEATHS_COL = 3;
-    public static final int RECOVERED_COL = 5;
     public static final int MIN_ARTICLES = 1;
 }
