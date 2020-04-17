@@ -13,7 +13,7 @@ public class ArticleList {
     private int totalResults;
 
     @SerializedName("articles")
-    private List<Article> articles = null;
+    private List<Article> articles;
 
     public String getStatus() {
         return status;

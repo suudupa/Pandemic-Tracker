@@ -1,11 +1,31 @@
 <resources>
-    <string name="app_name">COVID-19 Tracker</string>
+    <string name="app_name">Pandemic Tracker</string>
+    <string name="headlinesTitle">Top Headlines</string>
+    <string name="settingsTitle">Settings</string>
+    <string name="aboutTitle">About</string>
+    <string name="contributorsTitle">Contributors</string>
+    <string name="darkModeTitle">Dark Mode</string>
+    <string name="darkModeKey">enableDarkMode</string>
+    <string name="favoriteRegionTitle">Home</string>
+    <string name="favoriteRegionDialogTitle">Select region</string>
+    <string name="favoriteRegionKey">fRegionKey</string>
+    <string name="languageTitle">Language</string>
+    <string name="languageDialogTitle">Select language</string>
+    <string name="languageKey">languageKey</string>
+
+    <string name="aboutText">"TODO"</string>
+    <string name="contributorsText">"TODO"</string>
+    <string name="darkModeText">Switch to dark mode for browsing and reading.</string>
+    <string name="languageText">Set language filter for headlines.</string>
+    <string name="favoriteRegionText">Choose which region should be displayed by default on the home screen.</string>
+
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
 
     <string name="cases">Coronavirus Cases:</string>
     <string name="deaths">Deaths:</string>
     <string name="recovered">Recovered:</string>
 
-    <string name="region_default">Global</string>
     <string-array name="region_list">
         <item>Global</item>
         <item>China</item>
@@ -174,5 +194,20 @@
         <item>Tanzania</item>
         <item>Togo</item>
     </string-array>
+    <string name="region_default">Global</string>
+
+    <string-array name="language_titles">
+        <item>None</item>
+        <item>English</item>
+        <item>Français</item>
+        <item>Español</item>
+    </string-array>
+    <string-array name="language_values">
+        <item>none</item>
+        <item>en</item>
+        <item>fr</item>
+        <item>es</item>
+    </string-array>
+    <string name="language_default_value">none</string>
 
 </resources>
