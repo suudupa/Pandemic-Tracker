@@ -46,39 +46,39 @@ import retrofit2.Response;
 
 import static com.suudupa.coronavirustracker.utility.Resources.AND_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.API_KEY;
+import static com.suudupa.coronavirustracker.utility.Resources.AUTHOR;
 import static com.suudupa.coronavirustracker.utility.Resources.CASES;
 import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
+import static com.suudupa.coronavirustracker.utility.Resources.DATE;
 import static com.suudupa.coronavirustracker.utility.Resources.DEATHS;
 import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
+import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
 import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
 import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
+import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
+import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
+import static com.suudupa.coronavirustracker.utility.Resources.URL;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
     public JSONObject jsonResponse;
-    public JSONArray jsonRegions;
     private Map<String, JSONObject> pandemicData = new LinkedHashMap<>();
 
-    public String numCases = "";
-    public String numDeaths = "";
-    public String numRecovered = "";
-
-    public TextView casesTextView;
-    public TextView deathsTextView;
-    public TextView recoveredTextView;
+    private TextView casesTextView;
+    private TextView deathsTextView;
+    private TextView recoveredTextView;
     private TextView topHeadlinesTextView;
 
     private SwipeRefreshLayout swipeRefresh;
-    private DrawerLayout drawer;
     private Spinner regionList;
-    private List<String> regions = new ArrayList<>();
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,11 +92,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         try {
             buildHashMap();
             loadData(GLOBAL);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
 
@@ -177,24 +173,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void setupSpinner() {
-        regions = new ArrayList<>(pandemicData.keySet());
+        List<String> regions = new ArrayList<>(pandemicData.keySet());
         ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions);
         regionList.setAdapter(dynamicRegionList);
     }
 
+    //TODO: refreshing reverts back to GLOBAL even though we save the selected region
     @Override
     public void onRefresh() {
         String selectedRegion = regionList.getSelectedItem().toString();
         try {
-            loadData(selectedRegion);
             buildHashMap();
-            setupSpinner();
+            loadData(selectedRegion);
             regionList.setPrompt(selectedRegion);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (JSONException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -206,12 +198,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void retrieveData(String name) throws JSONException {
         JSONObject region = pandemicData.get(name);
-        numCases = region.getString(CASES);
-        numDeaths = region.getString(DEATHS);
-        numRecovered = region.getString(RECOVERED);
-        casesTextView.setText(numCases);
-        deathsTextView.setText(numDeaths);
-        recoveredTextView.setText(numRecovered);
+        casesTextView.setText(region.getString(CASES));
+        deathsTextView.setText(region.getString(DEATHS));
+        recoveredTextView.setText(region.getString(RECOVERED));
     }
 
     public void loadArticles(String region) {
@@ -265,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void onFailure(Call<ArticleList> call, Throwable t) {
                 topHeadlinesTextView.setVisibility(View.INVISIBLE);
-                //error layout
+                //TODO: add error layout
                 swipeRefresh.setRefreshing(false);
             }
         });
@@ -289,12 +278,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 Article article = articles.get(position);
 
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-                intent.putExtra("url", article.getUrl());
-                intent.putExtra("title", article.getTitle());
-                intent.putExtra("img", article.getUrlToImage());
-                intent.putExtra("date", article.getPublishedAt());
-                intent.putExtra("source", article.getSource().getName());
-                intent.putExtra("author", article.getAuthor());
+                intent.putExtra(URL, article.getUrl());
+                intent.putExtra(TITLE, article.getTitle());
+                intent.putExtra(IMAGE, article.getUrlToImage());
+                intent.putExtra(DATE, article.getPublishedAt());
+                intent.putExtra(SOURCE, article.getSource().getName());
+                intent.putExtra(AUTHOR, article.getAuthor());
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);
