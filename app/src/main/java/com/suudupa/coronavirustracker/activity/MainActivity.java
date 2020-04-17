@@ -35,7 +35,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     public JSONObject jsonResponse;
     public JSONArray jsonRegions;
-    private Map<String, JSONObject> pandemicData = new HashMap<>();
+    private Map<String, JSONObject> pandemicData = new LinkedHashMap<>();
 
     public String numCases = "";
     public String numDeaths = "";
