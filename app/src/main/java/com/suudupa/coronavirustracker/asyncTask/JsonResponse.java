@@ -18,11 +18,15 @@ import java.net.URL;
 
 public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
+    private MainActivity mainActivityContext;
+    private String region;
+
     @Override
     protected Void doInBackground(Object... params) {
 
         String link = (String) params[0];
-        MainActivity mainActivityContext = (MainActivity) params[1];
+        mainActivityContext = (MainActivity) params[1];
+        region = (String) params[2];
 
         HttpURLConnection connection = null;
         URL url = null;
@@ -55,6 +59,17 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
         }
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        mainActivityContext.buildRegionList();
+        try {
+            mainActivityContext.loadData(region);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getJson(BufferedReader reader) throws IOException {

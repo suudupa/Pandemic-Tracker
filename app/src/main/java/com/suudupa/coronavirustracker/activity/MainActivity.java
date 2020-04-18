@@ -36,7 +36,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,12 +86,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         initializeView();
         setupDrawer();
 
-        try {
-            buildRegionList();
-            loadData(GLOBAL);
-        } catch (ExecutionException | InterruptedException | JSONException e) {
-            e.printStackTrace();
-        }
+        executeJsonResponse(GLOBAL);
 
         regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -156,8 +150,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    private void buildRegionList() throws ExecutionException, InterruptedException {
-        new JsonResponse().execute(DATA_URL, this).get();
+    private void executeJsonResponse(String region) {
+        new JsonResponse().execute(DATA_URL, this, region);
+    }
+
+    public void buildRegionList() {
         JSONArray jsonNames = jsonResponse.names();
         for (int i = 0; i < jsonNames.length() - 1; i++) {
             try {
@@ -175,19 +172,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         regionList.setAdapter(dynamicRegionList);
     }
 
-    //TODO: refreshing reverts back to GLOBAL even though we save the selected region
     @Override
     public void onRefresh() {
         String selectedRegion = regionList.getSelectedItem().toString();
-        try {
-            buildRegionList();
-            regionList.setSelection(regions.indexOf(selectedRegion));
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        executeJsonResponse(selectedRegion);
     }
 
-    private void loadData(String region) throws JSONException {
+    public void loadData(String region) throws JSONException {
         retrieveData(region);
         loadArticles(region);
     }
@@ -197,9 +188,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         casesTextView.setText(region.getString(CASES));
         deathsTextView.setText(region.getString(DEATHS));
         recoveredTextView.setText(region.getString(RECOVERED));
+        regionList.setSelection(regions.indexOf(name));
     }
 
-    public void loadArticles(String region) {
+    private void loadArticles(String region) {
 
         swipeRefresh.setRefreshing(true);
 
