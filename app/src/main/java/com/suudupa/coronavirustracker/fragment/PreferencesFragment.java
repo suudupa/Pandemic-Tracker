@@ -21,7 +21,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupRegionListPreference() {
         ListPreference regionListPreference = findPreference(getString(R.string.favoriteRegionKey));
-        if (regionListPreference.getEntries().length == 0) {
+        if (regionListPreference.getEntries() == null) {
             regionListPreference.setEntries(Utils.getCountryList());
             regionListPreference.setEntryValues(Utils.getCountryList());
             regionListPreference.setDefaultValue(GLOBAL);
