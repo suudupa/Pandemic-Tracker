@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private SwipeRefreshLayout swipeRefresh;
     private SharedPreferences sharedPreferences;
     private Spinner regionList;
-    private List<String> regions = new ArrayList<String>();
+    public static List<String> regions = new ArrayList<String>();
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();

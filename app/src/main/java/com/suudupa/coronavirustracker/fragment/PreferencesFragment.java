@@ -7,7 +7,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.suudupa.coronavirustracker.R;
-import com.suudupa.coronavirustracker.utility.Utils;
+import com.suudupa.coronavirustracker.activity.MainActivity;
 
 import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 
@@ -21,11 +21,14 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupRegionListPreference() {
         ListPreference regionListPreference = findPreference(getString(R.string.favoriteRegionKey));
-        if (regionListPreference.getEntries() == null) {
-            regionListPreference.setEntries(Utils.getCountryList());
-            regionListPreference.setEntryValues(Utils.getCountryList());
+        String [] regions = MainActivity.regions.toArray(new String[MainActivity.regions.size()]);
+//        if (regionListPreference.getEntries() == null) {
+//            regionListPreference.setEntries(Utils.getCountryList());
+//            regionListPreference.setEntryValues(Utils.getCountryList());
+            regionListPreference.setEntries(regions);
+            regionListPreference.setEntryValues(regions);
             regionListPreference.setDefaultValue(GLOBAL);
-        }
+//        }
         regionListPreference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: " + regionListPreference.getValue());
         regionListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
