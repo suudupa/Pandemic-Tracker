@@ -11,7 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.suudupa.coronavirustracker.R;
-import com.suudupa.coronavirustracker.fragment.SettingsFragment;
+import com.suudupa.coronavirustracker.fragment.PreferencesFragment;
 
 public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,7 +28,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.preferences, new SettingsFragment())
+                .replace(R.id.preferences, new PreferencesFragment())
                 .commit();
     }
 

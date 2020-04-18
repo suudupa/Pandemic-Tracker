@@ -7,8 +7,9 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -34,6 +35,16 @@ public class Utils {
     public static String getCountry() {
         Locale locale = Locale.getDefault();
         return locale.getCountry().toLowerCase();
+    }
+
+    public static String[] getCountryList() {
+        String[] countryCodes = Locale.getISOCountries();
+        List<String> countryNames = new ArrayList<>();
+        for (String countryCode : countryCodes) {
+            Locale locale = new Locale("", countryCode);
+            countryNames.add(locale.getDisplayCountry());
+        }
+        return countryNames.toArray(new String[countryNames.size()]);
     }
 
     public static String getDate() {
