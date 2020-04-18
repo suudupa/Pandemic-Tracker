@@ -3,10 +3,13 @@ package com.suudupa.coronavirustracker.fragment;
 import android.os.Bundle;
 
 import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.utility.Utils;
+
+import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
 
@@ -17,10 +20,19 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void setupRegionListPreference() {
-        ListPreference regionListPreference = findPreference("fRegionKey");
-        //TODO: make sure this is only done once
-        regionListPreference.setEntries(Utils.getCountryList());
-        regionListPreference.setEntryValues(Utils.getCountryList());
-        regionListPreference.setDefaultValue(Utils.getCountry());
+        ListPreference regionListPreference = findPreference(getString(R.string.favoriteRegionKey));
+        if (regionListPreference.getEntries().length == 0) {
+            regionListPreference.setEntries(Utils.getCountryList());
+            regionListPreference.setEntryValues(Utils.getCountryList());
+            regionListPreference.setDefaultValue(GLOBAL);
+        }
+        regionListPreference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: " + regionListPreference.getValue());
+        regionListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                preference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: " + newValue.toString());
+                return true;
+            }
+        });
     }
 }

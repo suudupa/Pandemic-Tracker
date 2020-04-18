@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
+
 public class Utils {
 
     public static ColorDrawable[] vibrantLightColorList =
@@ -40,6 +42,7 @@ public class Utils {
     public static String[] getCountryList() {
         String[] countryCodes = Locale.getISOCountries();
         List<String> countryNames = new ArrayList<>();
+        countryNames.add(GLOBAL);
         for (String countryCode : countryCodes) {
             Locale locale = new Locale("", countryCode);
             countryNames.add(locale.getDisplayCountry());
