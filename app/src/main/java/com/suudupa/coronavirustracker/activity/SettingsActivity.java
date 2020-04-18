@@ -34,13 +34,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.homeScreen) {
+        if (item.getItemId() == R.id.homeScreen) {
             startActivity(new Intent(this, MainActivity.class));
         }
-
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
