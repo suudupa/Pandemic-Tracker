@@ -35,9 +35,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
@@ -66,7 +64,6 @@ import static com.suudupa.coronavirustracker.utility.Resources.URL;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
     public JSONObject jsonResponse;
-    private Map<String, JSONObject> pandemicData = new LinkedHashMap<>();
 
     private TextView casesTextView;
     private TextView deathsTextView;
@@ -75,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private SwipeRefreshLayout swipeRefresh;
     private Spinner regionList;
+    private List<String> regions = new ArrayList<String>();
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setupDrawer();
 
         try {
-            buildHashMap();
+            buildRegionList();
             loadData(GLOBAL);
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
@@ -158,13 +156,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    private void buildHashMap() throws ExecutionException, InterruptedException {
+    private void buildRegionList() throws ExecutionException, InterruptedException {
         new JsonResponse().execute(DATA_URL, this).get();
         JSONArray jsonNames = jsonResponse.names();
         for (int i = 0; i < jsonNames.length() - 1; i++) {
             try {
                 String region = jsonNames.getString(i);
-                pandemicData.put(region, jsonResponse.getJSONObject(region));
+                regions.add(region);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void setupSpinner() {
-        List<String> regions = new ArrayList<>(pandemicData.keySet());
         ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions);
         regionList.setAdapter(dynamicRegionList);
     }
@@ -183,10 +180,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onRefresh() {
         String selectedRegion = regionList.getSelectedItem().toString();
         try {
-            buildHashMap();
-            loadData(selectedRegion);
-            regionList.setPrompt(selectedRegion);
-        } catch (JSONException | InterruptedException | ExecutionException e) {
+            buildRegionList();
+            regionList.setSelection(regions.indexOf(selectedRegion));
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -197,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void retrieveData(String name) throws JSONException {
-        JSONObject region = pandemicData.get(name);
+        JSONObject region = jsonResponse.getJSONObject(name);
         casesTextView.setText(region.getString(CASES));
         deathsTextView.setText(region.getString(DEATHS));
         recoveredTextView.setText(region.getString(RECOVERED));
