@@ -63,6 +63,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.URL;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
     public JSONObject jsonResponse;
+    private JSONArray jsonNames;
 
     private TextView casesTextView;
     private TextView deathsTextView;
@@ -155,16 +156,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void buildRegionList() {
-        JSONArray jsonNames = jsonResponse.names();
-        for (int i = 0; i < jsonNames.length() - 1; i++) {
-            try {
-                String region = jsonNames.getString(i);
-                regions.add(region);
-            } catch (JSONException e) {
-                e.printStackTrace();
+        JSONArray oldJsonNames = jsonNames;
+        jsonNames = jsonResponse.names();
+        if (oldJsonNames == null || (oldJsonNames.hashCode() != jsonNames.hashCode())) {
+            regions.clear();
+            for (int i = 0; i < jsonNames.length() - 1; i++) {
+                try {
+                    String region = jsonNames.getString(i);
+                    regions.add(region);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+            setupSpinner();
         }
-        setupSpinner();
     }
 
     private void setupSpinner() {
