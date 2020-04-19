@@ -16,4 +16,14 @@ public interface ApiInterface {
             @Query("sortBy") String sortBy,
             @Query("apiKey") String apiKey
     );
+
+    @GET("everything")
+    Call<ArticleList> getLatestArticles(
+
+            @Query("q") String keywords,
+            @Query("from") String from,
+            @Query("language") String language,
+            @Query("sortBy") String sortBy,
+            @Query("apiKey") String apiKey
+    );
 }

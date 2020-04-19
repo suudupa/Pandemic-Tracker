@@ -204,6 +204,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         regionList.setSelection(regions.indexOf(name));
     }
 
+    private String getLanguage() {
+        return sharedPreferences.getString(getString(R.string.languageKey), "");
+    }
+
     private void loadArticles(String region) {
 
         swipeRefresh.setRefreshing(true);
@@ -214,10 +218,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         String q;
         if (region.equals(GLOBAL)) {
             q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
-            articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+            if (getLanguage().length() == 0) {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+            }
+            else {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, API_KEY);
+            }
         } else {
             q = urlEncode(KEYWORD_1 + AND_OP + region);
-            articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+            if (getLanguage().length() == 0) {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+            }
+            else {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, API_KEY);
+            }
         }
 
         articleListCall.enqueue(new Callback<ArticleList>() {
