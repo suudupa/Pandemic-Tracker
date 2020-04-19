@@ -37,5 +37,6 @@
         <item>fr</item>
     </string-array>
     <string name="language_default_value">""</string>
+    <string name="region_default_value">"World"</string>
 
 </resources>

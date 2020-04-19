@@ -22,19 +22,18 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupFavoriteRegionPreference() {
         ListPreference favoriteRegionPreference = findPreference(getString(R.string.favoriteRegionKey));
-        String [] regions = MainActivity.regions.toArray(new String[MainActivity.regions.size()]);
+        String [] regions = MainActivity.regions.toArray(new String[0]);
 //        if (favoriteRegionPreference.getEntries() == null) {
 //            favoriteRegionPreference.setEntries(Utils.getCountryList());
 //            favoriteRegionPreference.setEntryValues(Utils.getCountryList());
         favoriteRegionPreference.setEntries(regions);
         favoriteRegionPreference.setEntryValues(regions);
-        favoriteRegionPreference.setDefaultValue(GLOBAL);
 //        }
-        favoriteRegionPreference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: " + favoriteRegionPreference.getValue());
+        favoriteRegionPreference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: %s");
         favoriteRegionPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                preference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: " + newValue.toString());
+                preference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: %s");
                 return true;
             }
         });
@@ -42,11 +41,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupLanguagePreference() {
         ListPreference languagePreference = findPreference(getString(R.string.languageKey));
-        languagePreference.setSummary(getString(R.string.languageText) + " Current selection: " + languagePreference.getEntry());
+        languagePreference.setSummary(getString(R.string.languageText) + " Current selection: %s");
         languagePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                preference.setSummary(getString(R.string.languageText) + " Current selection: " + newValue.toString());
+                preference.setSummary(getString(R.string.languageText) + " Current selection: %s");
                 return true;
             }
         });

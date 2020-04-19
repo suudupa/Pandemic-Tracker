@@ -70,7 +70,7 @@ public class Utils {
     public static String formatDateTime (String dateString) {
         PrettyTime p = new PrettyTime(new Locale(getCountry()));
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
             Date date = simpleDateFormat.parse(dateString);
             return p.format(date);
         } catch (ParseException e) {
