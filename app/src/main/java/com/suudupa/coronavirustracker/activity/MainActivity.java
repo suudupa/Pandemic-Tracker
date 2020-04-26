@@ -59,6 +59,8 @@ import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPKEY;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPTEXT;
 import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
 import static com.suudupa.coronavirustracker.utility.Resources.URL;
 
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private TextView casesTextView;
     private TextView deathsTextView;
     private TextView recoveredTextView;
+    private TextView timestampTextView;
     private TextView topHeadlinesTextView;
 
     private SwipeRefreshLayout swipeRefresh;
@@ -119,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         casesTextView = findViewById(R.id.casesTextView);
         deathsTextView = findViewById(R.id.deathsTextView);
         recoveredTextView = findViewById(R.id.recoveredTextView);
+        timestampTextView = findViewById(R.id.timestampTextView);
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
         regionList = findViewById(R.id.regionListSpinner);
         recyclerView = findViewById(R.id.recyclerView);
@@ -201,6 +205,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         casesTextView.setText(region.getString(CASES));
         deathsTextView.setText(region.getString(DEATHS));
         recoveredTextView.setText(region.getString(RECOVERED));
+        String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMPKEY));
+        timestampTextView.setText(TIMESTAMPTEXT + lastUpdated);
         regionList.setSelection(regions.indexOf(name));
     }
 

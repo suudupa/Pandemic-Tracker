@@ -78,4 +78,11 @@ public class Utils {
             return "";
         }
     }
+
+    public static String convertUnixTimestamp (String timestamp) {
+        long time = Long.parseLong(timestamp)*1000L;
+        java.util.Date date = new java.util.Date(time);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+        return simpleDateFormat.format(date);
+    }
 }

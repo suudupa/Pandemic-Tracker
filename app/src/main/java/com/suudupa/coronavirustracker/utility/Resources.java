@@ -7,6 +7,8 @@ public class Resources {
     public static final String CASES = "cases";
     public static final String DEATHS = "deaths";
     public static final String RECOVERED = "recovered";
+    public static final String TIMESTAMPKEY = "last_updated";
+    public static final String TIMESTAMPTEXT = "Last updated: ";
     public static final String API_KEY = "8adc6c6586d44ce49ee3a170649ec33b";
     public static final String KEYWORD_1 = "coronavirus";
     public static final String KEYWORD_2 = "covid-19";
