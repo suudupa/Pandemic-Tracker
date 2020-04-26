@@ -8,6 +8,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -84,5 +85,9 @@ public class Utils {
         java.util.Date date = new java.util.Date(time);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         return simpleDateFormat.format(date);
+    }
+
+    public static void sortAlphabetical (List<String> regionsList) {
+        Collections.sort(regionsList);
     }
 }
