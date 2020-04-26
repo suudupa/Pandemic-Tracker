@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -29,6 +28,7 @@ import com.suudupa.coronavirustracker.asyncTask.JsonResponse;
 import com.suudupa.coronavirustracker.model.Article;
 import com.suudupa.coronavirustracker.model.ArticleList;
 import com.suudupa.coronavirustracker.utility.Utils;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private SwipeRefreshLayout swipeRefresh;
     private SharedPreferences sharedPreferences;
-    private Spinner regionList;
+    private SearchableSpinner regionList;
     public static List<String> regions = new ArrayList<String>();
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;

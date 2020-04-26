@@ -69,7 +69,7 @@
 
                 </LinearLayout>
 
-                <Spinner
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                     android:id="@+id/regionListSpinner"
                     android:layout_width="320dp"
                     android:layout_height="40dp"
