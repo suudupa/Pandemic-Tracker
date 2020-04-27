@@ -8,8 +8,9 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.activity.MainActivity;
+import com.suudupa.coronavirustracker.utility.Utils;
 
-import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
+import java.util.List;
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
 
@@ -22,7 +23,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupFavoriteRegionPreference() {
         ListPreference favoriteRegionPreference = findPreference(getString(R.string.favoriteRegionKey));
-        String [] regions = MainActivity.regions.toArray(new String[0]);
+        List<String> allRegions = MainActivity.regions;
+        Utils.sortAlphabetical(allRegions);
+        String [] regions = allRegions.toArray(new String[0]);
 //        if (favoriteRegionPreference.getEntries() == null) {
 //            favoriteRegionPreference.setEntries(Utils.getCountryList());
 //            favoriteRegionPreference.setEntryValues(Utils.getCountryList());
