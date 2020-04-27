@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.text.ParseException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,10 +59,11 @@ public class Utils {
     }
 
     public static String formatDate (String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("E, d MMM yyyy", new Locale(getCountry()));
+        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault());
         try {
             Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(dateString);
-            return dateFormat.format(date);
+            assert date != null;
+            return dateFormatter.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
             return "";
@@ -69,9 +71,9 @@ public class Utils {
     }
 
     public static String formatDateTime (String dateString) {
-        PrettyTime p = new PrettyTime(new Locale(getCountry()));
+        PrettyTime p = new PrettyTime();
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", new Locale(getCountry()));
             Date date = simpleDateFormat.parse(dateString);
             return p.format(date);
         } catch (ParseException e) {
@@ -83,8 +85,8 @@ public class Utils {
     public static String convertUnixTimestamp (String timestamp) {
         long time = Long.parseLong(timestamp)*1000L;
         java.util.Date date = new java.util.Date(time);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-        return simpleDateFormat.format(date);
+        DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
+        return dateFormatter.format(date);
     }
 
     public static void sortAlphabetical (List<String> regionsList) {
