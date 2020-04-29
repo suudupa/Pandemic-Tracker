@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import static com.suudupa.coronavirustracker.utility.Resources.API_KEYS;
 import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 
 public class Utils {
@@ -34,6 +35,11 @@ public class Utils {
     public static ColorDrawable getRandomColorDrawable() {
         int index = new Random().nextInt(vibrantLightColorList.length);
         return vibrantLightColorList[index];
+    }
+
+    public static String getRandomApiKey() {
+        int index = new Random().nextInt(API_KEYS.length);
+        return API_KEYS[index];
     }
 
     public static String getCountry() {

@@ -44,7 +44,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suudupa.coronavirustracker.utility.Resources.AND_OP;
-import static com.suudupa.coronavirustracker.utility.Resources.API_KEY;
 import static com.suudupa.coronavirustracker.utility.Resources.AUTHOR;
 import static com.suudupa.coronavirustracker.utility.Resources.CASES;
 import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
@@ -63,6 +62,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPKEY;
 import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPTEXT;
 import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
 import static com.suudupa.coronavirustracker.utility.Resources.URL;
+import static com.suudupa.coronavirustracker.utility.Utils.getRandomApiKey;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -225,18 +225,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         if (region.equals(GLOBAL)) {
             q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
             if (getLanguage().length() == 0) {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
             }
             else {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, API_KEY);
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
             }
         } else {
             q = urlEncode(KEYWORD_1 + AND_OP + region);
             if (getLanguage().length() == 0) {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
             }
             else {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, API_KEY);
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
             }
         }
 
