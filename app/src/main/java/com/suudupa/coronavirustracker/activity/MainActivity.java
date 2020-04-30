@@ -163,6 +163,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         return sharedPreferences.getString(getString(R.string.favoriteRegionKey), GLOBAL);
     }
 
+    private String getLanguage() {
+        return sharedPreferences.getString(getString(R.string.languageKey), "");
+    }
+
     private void executeJsonResponse(String region) {
         new JsonResponse().execute(DATA_URL, this, region);
     }
@@ -202,16 +206,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void retrieveData(String name) throws JSONException {
         JSONObject region = jsonResponse.getJSONObject(name);
-        casesTextView.setText(region.getString(CASES));
-        deathsTextView.setText(region.getString(DEATHS));
-        recoveredTextView.setText(region.getString(RECOVERED));
+        casesTextView.setText(formatNumber(region.getString(CASES)));
+        deathsTextView.setText(formatNumber(region.getString(DEATHS)));
+        recoveredTextView.setText(formatNumber(region.getString(RECOVERED)));
         String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMPKEY));
         timestampTextView.setText(TIMESTAMPTEXT + lastUpdated);
         regionList.setSelection(regions.indexOf(name));
     }
 
-    private String getLanguage() {
-        return sharedPreferences.getString(getString(R.string.languageKey), "");
+    private String formatNumber (String value) {
+        int number = Integer.parseInt(value);
+        return String.format("%,d", number);
     }
 
     private void loadArticles(String region) {
