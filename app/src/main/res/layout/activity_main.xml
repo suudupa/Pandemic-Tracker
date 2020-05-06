@@ -73,7 +73,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/casesTitleTextView" />
 
-
                     <TextView
                         android:id="@+id/deathsTitleTextView"
                         android:layout_width="wrap_content"
@@ -117,7 +116,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/recoveredTitleTextView" />
-
 
                     <TextView
                         android:id="@+id/timestampTextView"
@@ -213,7 +211,9 @@
                 android:layout_below="@id/errorMessage"
                 android:layout_marginTop="20dp"
                 android:layout_centerHorizontal="true" />
+
         </RelativeLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
