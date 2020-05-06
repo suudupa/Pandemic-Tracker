@@ -7,17 +7,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.suudupa.coronavirustracker.R;
@@ -39,6 +31,16 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,31 +60,40 @@ import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
-import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPKEY;
-import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPTEXT;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_KEY;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_TEXT;
 import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
 import static com.suudupa.coronavirustracker.utility.Resources.URL;
 import static com.suudupa.coronavirustracker.utility.Utils.getRandomApiKey;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
+    public static List<String> regions = new ArrayList<String>();
     public JSONObject jsonResponse;
     private JSONArray jsonNames;
-
     private TextView casesTextView;
     private TextView deathsTextView;
     private TextView recoveredTextView;
     private TextView timestampTextView;
     private TextView topHeadlinesTextView;
-
     private SwipeRefreshLayout swipeRefresh;
     private SharedPreferences sharedPreferences;
     private SearchableSpinner regionList;
-    public static List<String> regions = new ArrayList<String>();
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
     private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private RelativeLayout errorLayout;
+    private Button btnRetry;
+
+    private static String urlEncode(String query) {
+        try {
+            return URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getCause());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
         initializeView();
         setupDrawer();
-
+        navigationView.getMenu().getItem(0).setChecked(true);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         executeJsonResponse(getFavoriteRegion());
 
@@ -130,24 +141,37 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
+        errorLayout = findViewById(R.id.errorLayout);
+        btnRetry = findViewById(R.id.btnRetry);
     }
 
     private void setupDrawer() {
         drawer = findViewById(R.id.drawerLayout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = findViewById(R.id.navigationView);
+        navigationView = findViewById(R.id.navigationView);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-       if (item.getItemId() == R.id.settingsScreen) {
+        if (item.getItemId() == R.id.settingsScreen) {
             startActivity(new Intent(this, SettingsActivity.class));
-       }
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //reset the selection when the activity is hidden
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
@@ -188,15 +212,24 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    private void setupSpinner() {
+    public void setupSpinner() {
         ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions);
         regionList.setAdapter(dynamicRegionList);
     }
 
+    private String getSelectedRegion() {
+        String selectedRegion;
+        try {
+            selectedRegion = regionList.getSelectedItem().toString();
+        } catch (NullPointerException e) {
+            selectedRegion = getFavoriteRegion();
+        }
+        return selectedRegion;
+    }
+
     @Override
     public void onRefresh() {
-        String selectedRegion = regionList.getSelectedItem().toString();
-        executeJsonResponse(selectedRegion);
+        executeJsonResponse(getSelectedRegion());
     }
 
     public void loadData(String region) throws JSONException {
@@ -209,12 +242,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         casesTextView.setText(formatNumber(region.getString(CASES)));
         deathsTextView.setText(formatNumber(region.getString(DEATHS)));
         recoveredTextView.setText(formatNumber(region.getString(RECOVERED)));
-        String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMPKEY));
-        timestampTextView.setText(TIMESTAMPTEXT + lastUpdated);
+        String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMP_KEY));
+        timestampTextView.setText(TIMESTAMP_TEXT + lastUpdated);
         regionList.setSelection(regions.indexOf(name));
     }
 
-    private String formatNumber (String value) {
+    private String formatNumber(String value) {
         int number = Integer.parseInt(value);
         return String.format("%,d", number);
     }
@@ -231,16 +264,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
             if (getLanguage().length() == 0) {
                 articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
-            }
-            else {
+            } else {
                 articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
             }
         } else {
             q = urlEncode(KEYWORD_1 + AND_OP + region);
             if (getLanguage().length() == 0) {
                 articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
-            }
-            else {
+            } else {
                 articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
             }
         }
@@ -270,8 +301,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     topHeadlinesTextView.setVisibility(View.VISIBLE);
                     swipeRefresh.setRefreshing(false);
-                }
-                else {
+                } else {
                     topHeadlinesTextView.setVisibility(View.INVISIBLE);
                     swipeRefresh.setRefreshing(false);
                 }
@@ -284,14 +314,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 swipeRefresh.setRefreshing(false);
             }
         });
-    }
-
-    private static String urlEncode(String query) {
-        try {
-            return URLEncoder.encode(query, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getCause());
-        }
     }
 
     private void articleSelectedListener() {
@@ -313,6 +335,23 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);
+            }
+        });
+    }
+
+    public void showError() {
+
+        swipeRefresh.setRefreshing(false);
+
+        if (errorLayout.getVisibility() == View.GONE) {
+            errorLayout.setVisibility(View.VISIBLE);
+        }
+
+        btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executeJsonResponse(getSelectedRegion());
+                errorLayout.setVisibility(View.GONE);
             }
         });
     }
