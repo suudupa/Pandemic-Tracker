@@ -1,22 +1,15 @@
 package com.suudupa.coronavirustracker.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.suudupa.coronavirustracker.R;
@@ -27,6 +20,7 @@ import com.suudupa.coronavirustracker.asyncTask.JsonResponse;
 import com.suudupa.coronavirustracker.model.Article;
 import com.suudupa.coronavirustracker.model.ArticleList;
 import com.suudupa.coronavirustracker.utility.Utils;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,17 +29,23 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suudupa.coronavirustracker.utility.Resources.AND_OP;
-import static com.suudupa.coronavirustracker.utility.Resources.API_KEY;
 import static com.suudupa.coronavirustracker.utility.Resources.AUTHOR;
 import static com.suudupa.coronavirustracker.utility.Resources.CASES;
 import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
@@ -60,25 +60,40 @@ import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_KEY;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_TEXT;
 import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
 import static com.suudupa.coronavirustracker.utility.Resources.URL;
+import static com.suudupa.coronavirustracker.utility.Utils.getRandomApiKey;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
+    public static List<String> regions = new ArrayList<String>();
     public JSONObject jsonResponse;
-    private Map<String, JSONObject> pandemicData = new LinkedHashMap<>();
-
+    private JSONArray jsonNames;
     private TextView casesTextView;
     private TextView deathsTextView;
     private TextView recoveredTextView;
+    private TextView timestampTextView;
     private TextView topHeadlinesTextView;
-
     private SwipeRefreshLayout swipeRefresh;
-    private Spinner regionList;
+    private SharedPreferences sharedPreferences;
+    private SearchableSpinner regionList;
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
     private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private RelativeLayout errorLayout;
+    private Button btnRetry;
+
+    private static String urlEncode(String query) {
+        try {
+            return URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getCause());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,13 +103,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
         initializeView();
         setupDrawer();
-
-        try {
-            buildHashMap();
-            loadData(GLOBAL);
-        } catch (ExecutionException | InterruptedException | JSONException e) {
-            e.printStackTrace();
-        }
+        navigationView.getMenu().getItem(0).setChecked(true);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        executeJsonResponse(getFavoriteRegion());
 
         regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -122,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         casesTextView = findViewById(R.id.casesTextView);
         deathsTextView = findViewById(R.id.deathsTextView);
         recoveredTextView = findViewById(R.id.recoveredTextView);
+        timestampTextView = findViewById(R.id.timestampTextView);
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
         regionList = findViewById(R.id.regionListSpinner);
         recyclerView = findViewById(R.id.recyclerView);
@@ -129,24 +141,37 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
+        errorLayout = findViewById(R.id.errorLayout);
+        btnRetry = findViewById(R.id.btnRetry);
     }
 
     private void setupDrawer() {
         drawer = findViewById(R.id.drawerLayout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = findViewById(R.id.navigationView);
+        navigationView = findViewById(R.id.navigationView);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-       if (item.getItemId() == R.id.settingsScreen) {
+        if (item.getItemId() == R.id.settingsScreen) {
             startActivity(new Intent(this, SettingsActivity.class));
-       }
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //reset the selection when the activity is hidden
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
@@ -158,52 +183,76 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    private void buildHashMap() throws ExecutionException, InterruptedException {
-        new JsonResponse().execute(DATA_URL, this).get();
-        JSONArray jsonNames = jsonResponse.names();
-        for (int i = 0; i < jsonNames.length() - 1; i++) {
-            try {
-                String region = jsonNames.getString(i);
-                pandemicData.put(region, jsonResponse.getJSONObject(region));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        setupSpinner();
+    private String getFavoriteRegion() {
+        return sharedPreferences.getString(getString(R.string.favoriteRegionKey), GLOBAL);
     }
 
-    private void setupSpinner() {
-        List<String> regions = new ArrayList<>(pandemicData.keySet());
+    private String getLanguage() {
+        return sharedPreferences.getString(getString(R.string.languageKey), "");
+    }
+
+    private void executeJsonResponse(String region) {
+        new JsonResponse().execute(DATA_URL, this, region);
+    }
+
+    public void buildRegionList() {
+        JSONArray oldJsonNames = jsonNames;
+        jsonNames = jsonResponse.names();
+        if (oldJsonNames == null || (oldJsonNames.hashCode() != jsonNames.hashCode())) {
+            regions.clear();
+            for (int i = 0; i < jsonNames.length() - 1; i++) {
+                try {
+                    String region = jsonNames.getString(i);
+                    regions.add(region);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            setupSpinner();
+        }
+    }
+
+    public void setupSpinner() {
         ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions);
         regionList.setAdapter(dynamicRegionList);
     }
 
-    //TODO: refreshing reverts back to GLOBAL even though we save the selected region
-    @Override
-    public void onRefresh() {
-        String selectedRegion = regionList.getSelectedItem().toString();
+    private String getSelectedRegion() {
+        String selectedRegion;
         try {
-            buildHashMap();
-            loadData(selectedRegion);
-            regionList.setPrompt(selectedRegion);
-        } catch (JSONException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            selectedRegion = regionList.getSelectedItem().toString();
+        } catch (NullPointerException e) {
+            selectedRegion = getFavoriteRegion();
         }
+        return selectedRegion;
     }
 
-    private void loadData(String region) throws JSONException {
+    @Override
+    public void onRefresh() {
+        executeJsonResponse(getSelectedRegion());
+    }
+
+    public void loadData(String region) throws JSONException {
         retrieveData(region);
         loadArticles(region);
     }
 
     private void retrieveData(String name) throws JSONException {
-        JSONObject region = pandemicData.get(name);
-        casesTextView.setText(region.getString(CASES));
-        deathsTextView.setText(region.getString(DEATHS));
-        recoveredTextView.setText(region.getString(RECOVERED));
+        JSONObject region = jsonResponse.getJSONObject(name);
+        casesTextView.setText(formatNumber(region.getString(CASES)));
+        deathsTextView.setText(formatNumber(region.getString(DEATHS)));
+        recoveredTextView.setText(formatNumber(region.getString(RECOVERED)));
+        String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMP_KEY));
+        timestampTextView.setText(TIMESTAMP_TEXT + lastUpdated);
+        regionList.setSelection(regions.indexOf(name));
     }
 
-    public void loadArticles(String region) {
+    private String formatNumber(String value) {
+        int number = Integer.parseInt(value);
+        return String.format("%,d", number);
+    }
+
+    private void loadArticles(String region) {
 
         swipeRefresh.setRefreshing(true);
 
@@ -213,10 +262,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         String q;
         if (region.equals(GLOBAL)) {
             q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
-            articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+            if (getLanguage().length() == 0) {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
+            } else {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
+            }
         } else {
             q = urlEncode(KEYWORD_1 + AND_OP + region);
-            articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, API_KEY);
+            if (getLanguage().length() == 0) {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
+            } else {
+                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
+            }
         }
 
         articleListCall.enqueue(new Callback<ArticleList>() {
@@ -244,8 +301,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     topHeadlinesTextView.setVisibility(View.VISIBLE);
                     swipeRefresh.setRefreshing(false);
-                }
-                else {
+                } else {
                     topHeadlinesTextView.setVisibility(View.INVISIBLE);
                     swipeRefresh.setRefreshing(false);
                 }
@@ -258,14 +314,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 swipeRefresh.setRefreshing(false);
             }
         });
-    }
-
-    private static String urlEncode(String query) {
-        try {
-            return URLEncoder.encode(query, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getCause());
-        }
     }
 
     private void articleSelectedListener() {
@@ -287,6 +335,23 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);
+            }
+        });
+    }
+
+    public void showError() {
+
+        swipeRefresh.setRefreshing(false);
+
+        if (errorLayout.getVisibility() == View.GONE) {
+            errorLayout.setVisibility(View.VISIBLE);
+        }
+
+        btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executeJsonResponse(getSelectedRegion());
+                errorLayout.setVisibility(View.GONE);
             }
         });
     }

@@ -7,9 +7,7 @@
         <ListPreference
             android:title="@string/favoriteRegionTitle"
             android:dialogTitle="@string/favoriteRegionDialogTitle"
-            android:entries="@array/region_list"
-            android:entryValues="@array/region_list"
-            android:defaultValue="@string/region_default"
+            android:defaultValue="@string/region_default_value"
             android:summary="@string/favoriteRegionText"
             android:key="@string/favoriteRegionKey" />
 
