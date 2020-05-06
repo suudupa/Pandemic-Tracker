@@ -5,8 +5,8 @@ import android.graphics.drawable.ColorDrawable;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.text.ParseException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,7 +91,7 @@ public class Utils {
     public static String convertUnixTimestamp (String timestamp) {
         long time = Long.parseLong(timestamp)*1000L;
         java.util.Date date = new java.util.Date(time);
-        DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
+        DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT, Locale.getDefault());
         return dateFormatter.format(date);
     }
 
