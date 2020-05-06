@@ -26,12 +26,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         List<String> allRegions = MainActivity.regions;
         Utils.sortAlphabetical(allRegions);
         String [] regions = allRegions.toArray(new String[0]);
-//        if (favoriteRegionPreference.getEntries() == null) {
-//            favoriteRegionPreference.setEntries(Utils.getCountryList());
-//            favoriteRegionPreference.setEntryValues(Utils.getCountryList());
         favoriteRegionPreference.setEntries(regions);
         favoriteRegionPreference.setEntryValues(regions);
-//        }
+        updateDialogMessage(favoriteRegionPreference, allRegions);
         favoriteRegionPreference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: %s");
         favoriteRegionPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -52,5 +49,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
+    }
+
+    private void updateDialogMessage(ListPreference listPreference, List<String> elements) {
+        if (elements == null || elements.size() == 0) {
+            listPreference.setDialogMessage(R.string.favoriteRegionErrorText);
+        }
     }
 }

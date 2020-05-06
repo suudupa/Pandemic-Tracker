@@ -1,5 +1,6 @@
 package com.suudupa.coronavirustracker.asyncTask;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.suudupa.coronavirustracker.activity.MainActivity;
@@ -9,15 +10,23 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+
+import static com.suudupa.coronavirustracker.utility.Resources.REGIONS_FILE;
 
 public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
+    private String filename;
     private MainActivity mainActivityContext;
     private String region;
 
@@ -25,12 +34,14 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
     protected Void doInBackground(Object... params) {
 
         String link = (String) params[0];
+        String [] path = link.split("/");
+        filename = path[path.length-1];
         mainActivityContext = (MainActivity) params[1];
         region = (String) params[2];
 
         HttpURLConnection connection = null;
         URL url = null;
-        String json = "";
+        String json = null;
 
         try {
             url = new URL(link);
@@ -46,7 +57,8 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
             json = getJson(reader);
             in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            cancel(true);
+            return null;
         } finally {
             assert connection != null;
             connection.disconnect();
@@ -54,7 +66,8 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
         try {
             mainActivityContext.jsonResponse = new JSONObject(json);
-        } catch (JSONException e) {
+            writeObject(mainActivityContext.getApplicationContext(), filename, json);
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
 
@@ -63,12 +76,25 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        mainActivityContext.buildRegionList();
+        getData(region);
+    }
+
+    @Override
+    protected void onCancelled() {
+        String jsonData = null;
+        boolean notFound = false;
+
         try {
-            mainActivityContext.loadData(region);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            jsonData = (String) readObject(mainActivityContext.getApplicationContext(), filename);
+        } catch (IOException | ClassNotFoundException e) {
+            notFound = true;
+        }
+
+        if (notFound || jsonData == null) {
+            mainActivityContext.showError();
+        }
+        else {
+            getData(jsonData, region);
         }
     }
 
@@ -79,5 +105,61 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
             sBuilder.append(line + "\n");
         }
         return sBuilder.toString();
+    }
+
+    private void getData(String region) {
+        mainActivityContext.buildRegionList();
+        try {
+            writeObject(mainActivityContext.getApplicationContext(), REGIONS_FILE, MainActivity.regions);
+            mainActivityContext.loadData(region);
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getData(String json, String region) {
+        try {
+            mainActivityContext.jsonResponse = new JSONObject(json);
+            getLatestRegionList();
+            mainActivityContext.loadData(region);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getLatestRegionList() {
+        List<String> regionList = null;
+        boolean notFound = false;
+
+        try {
+            regionList = (List<String>) readObject(mainActivityContext.getApplicationContext(), REGIONS_FILE);
+        } catch (IOException | ClassNotFoundException e) {
+            notFound = true;
+        }
+
+        if (notFound || regionList == null) {
+            mainActivityContext.buildRegionList();
+        }
+        else {
+            MainActivity.regions = regionList;
+            mainActivityContext.setupSpinner();
+        }
+    }
+
+    private void writeObject(Context context, String fileName, Object object) throws IOException {
+        FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(object);
+        oos.flush();
+        oos.close();
+        fos.close();
+    }
+
+    private Object readObject(Context context, String fileName) throws IOException, ClassNotFoundException {
+        FileInputStream fis = context.openFileInput(fileName);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        Object object = ois.readObject();
+        fis.close();
+        return object;
     }
 }

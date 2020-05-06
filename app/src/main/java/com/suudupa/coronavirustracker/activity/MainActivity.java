@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -58,8 +60,8 @@ import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
-import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPKEY;
-import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMPTEXT;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_KEY;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_TEXT;
 import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
 import static com.suudupa.coronavirustracker.utility.Resources.URL;
 import static com.suudupa.coronavirustracker.utility.Utils.getRandomApiKey;
@@ -83,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
     private DrawerLayout drawer;
+    private RelativeLayout errorLayout;
+    private Button btnRetry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
+        errorLayout = findViewById(R.id.errorLayout);
+        btnRetry = findViewById(R.id.btnRetry);
     }
 
     private void setupDrawer() {
@@ -188,15 +194,24 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-    private void setupSpinner() {
+    public void setupSpinner() {
         ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions);
         regionList.setAdapter(dynamicRegionList);
     }
 
+    private String getSelectedRegion() {
+        String selectedRegion;
+        try {
+            selectedRegion = regionList.getSelectedItem().toString();
+        } catch (NullPointerException e) {
+            selectedRegion = getFavoriteRegion();
+        }
+        return selectedRegion;
+    }
+
     @Override
     public void onRefresh() {
-        String selectedRegion = regionList.getSelectedItem().toString();
-        executeJsonResponse(selectedRegion);
+        executeJsonResponse(getSelectedRegion());
     }
 
     public void loadData(String region) throws JSONException {
@@ -209,8 +224,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         casesTextView.setText(formatNumber(region.getString(CASES)));
         deathsTextView.setText(formatNumber(region.getString(DEATHS)));
         recoveredTextView.setText(formatNumber(region.getString(RECOVERED)));
-        String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMPKEY));
-        timestampTextView.setText(TIMESTAMPTEXT + lastUpdated);
+        String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMP_KEY));
+        timestampTextView.setText(TIMESTAMP_TEXT + lastUpdated);
         regionList.setSelection(regions.indexOf(name));
     }
 
@@ -313,6 +328,23 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);
+            }
+        });
+    }
+
+    public void showError() {
+
+        swipeRefresh.setRefreshing(false);
+
+        if (errorLayout.getVisibility() == View.GONE) {
+            errorLayout.setVisibility(View.VISIBLE);
+        }
+
+        btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executeJsonResponse(getSelectedRegion());
+                errorLayout.setVisibility(View.GONE);
             }
         });
     }
