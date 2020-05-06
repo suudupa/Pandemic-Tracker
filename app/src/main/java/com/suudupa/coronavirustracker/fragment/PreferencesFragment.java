@@ -2,15 +2,16 @@ package com.suudupa.coronavirustracker.fragment;
 
 import android.os.Bundle;
 
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.activity.MainActivity;
 import com.suudupa.coronavirustracker.utility.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
 
@@ -23,7 +24,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupFavoriteRegionPreference() {
         ListPreference favoriteRegionPreference = findPreference(getString(R.string.favoriteRegionKey));
-        List<String> allRegions = MainActivity.regions;
+        List<String> allRegions = new ArrayList<String>(MainActivity.regions);
         Utils.sortAlphabetical(allRegions);
         String [] regions = allRegions.toArray(new String[0]);
         favoriteRegionPreference.setEntries(regions);
