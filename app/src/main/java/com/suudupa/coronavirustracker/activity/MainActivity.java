@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private NavigationView navigationView;
     private RelativeLayout errorLayout;
     private Button btnRetry;
+    private RelativeLayout noArticleLayout;
+    private Button noArticleBtnRetry;
 
     private static String urlEncode(String query) {
         try {
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setupDrawer();
         navigationView.getMenu().getItem(0).setChecked(true);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         executeJsonResponse(getFavoriteRegion());
 
         regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -121,9 +124,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
 
@@ -144,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recyclerView.setNestedScrollingEnabled(false);
         errorLayout = findViewById(R.id.errorLayout);
         btnRetry = findViewById(R.id.btnRetry);
+        noArticleLayout = findViewById(R.id.noResultLayout);
+        noArticleBtnRetry = findViewById(R.id.noResultBtnRetry);
     }
 
     private void setupDrawer() {
@@ -234,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void loadData(String region) throws JSONException {
+        errorLayout.setVisibility(View.GONE);
         retrieveData(region);
         loadArticles(region);
     }
@@ -284,6 +288,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 if (response.isSuccessful() && response.body().getArticles() != null) {
 
+                    noArticleLayout.setVisibility(View.GONE);
+
                     if (!articles.isEmpty()) {
                         articles.clear();
                     }
@@ -305,15 +311,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                 } else {
                     topHeadlinesTextView.setVisibility(View.INVISIBLE);
-                    swipeRefresh.setRefreshing(false);
+                    showArticleError();
                 }
             }
 
             @Override
             public void onFailure(Call<ArticleList> call, Throwable t) {
                 topHeadlinesTextView.setVisibility(View.INVISIBLE);
-                //TODO: add error layout
-                swipeRefresh.setRefreshing(false);
+                showArticleError();
             }
         });
     }
@@ -342,19 +347,29 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void showError() {
-
-        swipeRefresh.setRefreshing(false);
-
-        if (errorLayout.getVisibility() == View.GONE) {
-            errorLayout.setVisibility(View.VISIBLE);
-        }
-
+        makeLayoutVisible(errorLayout);
         btnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 executeJsonResponse(getSelectedRegion());
-                errorLayout.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void showArticleError() {
+        makeLayoutVisible(noArticleLayout);
+        noArticleBtnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadArticles(getSelectedRegion());
+            }
+        });
+    }
+
+    private void makeLayoutVisible(RelativeLayout relativeLayout) {
+        swipeRefresh.setRefreshing(false);
+        if (relativeLayout.getVisibility() == View.GONE) {
+            relativeLayout.setVisibility(View.VISIBLE);
+        }
     }
 }
