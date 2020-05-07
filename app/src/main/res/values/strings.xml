@@ -2,6 +2,7 @@
     <string name="app_name">Pandemic Tracker</string>
     <string name="headlinesTitle">Top Headlines</string>
     <string name="errorTitle">Oops!</string>
+    <string name="noResultTitle">Uh oh!</string>
     <string name="settingsTitle">Settings</string>
     <string name="aboutTitle">About</string>
     <string name="darkModeTitle">Dark Mode</string>
@@ -14,7 +15,9 @@
     <string name="languageKey">languageKey</string>
 
     <string name="errorText">No Internet connection found. Check your connection or try again.</string>
+    <string name="noResultText">No articles found. This could be an internal server error or a network failure. Please try again.</string>
     <string name="imageText">No Internet connection</string>
+    <string name="noResultImageText">No articles found</string>
     <string name="retryText">Retry</string>
     <string name="aboutText">"Pandemic Tracker lets you stay up to date with the latest stats and news from around the globe on all pandemics."</string>
     <string name="darkModeText">Switch to dark mode for browsing and reading.</string>
