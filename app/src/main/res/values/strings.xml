@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Pandemic Tracker</string>
-    <string name="headlinesTitle">Top Headlines</string>
+    <string name="headlinesTitle">Top Headlines:\u0020</string>
     <string name="errorTitle">Oops!</string>
     <string name="noResultTitle">Uh oh!</string>
     <string name="settingsTitle">Settings</string>

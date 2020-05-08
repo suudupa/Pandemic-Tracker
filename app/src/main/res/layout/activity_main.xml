@@ -138,12 +138,10 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:gravity="center"
-                        android:text="@string/headlinesTitle"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         app:fontFamily="sans-serif-light"
-                        app:layout_constraintTop_toBottomOf="@id/recoveredTextView"
-                        tools:visibility="invisible" />
+                        app:layout_constraintTop_toBottomOf="@id/recoveredTextView" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"

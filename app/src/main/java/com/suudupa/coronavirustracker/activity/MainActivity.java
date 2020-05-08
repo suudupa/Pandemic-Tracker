@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
 
         articleListCall = callApi(apiInterface, q);
-
+        topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle) + region);
         articleListCall.enqueue(new Callback<ArticleList>() {
 
             @Override
