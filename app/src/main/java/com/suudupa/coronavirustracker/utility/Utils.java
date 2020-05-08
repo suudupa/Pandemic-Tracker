@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -99,6 +101,19 @@ public class Utils {
         java.util.Date date = new java.util.Date(time);
         DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT, Locale.getDefault());
         return dateFormatter.format(date);
+    }
+
+    public static String formatNumber(String value) {
+        int number = Integer.parseInt(value);
+        return String.format("%,d", number);
+    }
+
+    public static String urlEncode(String query) {
+        try {
+            return URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getCause());
+        }
     }
 
     public static void sortAlphabetical (List<String> regionsList) {
