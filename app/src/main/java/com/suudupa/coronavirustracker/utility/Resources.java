@@ -11,6 +11,8 @@ public class Resources {
     public static final String RECOVERED = "recovered";
     public static final String TIMESTAMP_KEY = "last_updated";
     public static final String TIMESTAMP_TEXT = "Last updated: ";
+    public static final String NO_CONNECTION = "No Internet Connection";
+    public static final String NO_CONNECTION_ACTION = "DISMISS";
     public static final String API_KEY_1 = "8adc6c6586d44ce49ee3a170649ec33b";
     public static final String API_KEY_2 = "66fbfc3fa8a44467ae93c9d59d8edf7e";
     public static final String API_KEY_3 = "2ababc39711d4f3f9825b7a310d887f9";

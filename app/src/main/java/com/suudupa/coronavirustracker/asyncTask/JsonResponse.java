@@ -91,6 +91,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
         }
         else {
             getData(jsonData, region);
+            mainActivityContext.showNoConnectionMsg();
         }
     }
 

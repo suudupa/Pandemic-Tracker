@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.adapter.ArticleListAdapter;
 import com.suudupa.coronavirustracker.api.ApiClient;
@@ -57,6 +58,8 @@ import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
 import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
+import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION;
+import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION_ACTION;
 import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
 import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
@@ -385,5 +388,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         } else {
             return apiInterface.getLatestArticles(query, Utils.getDate(), getFavoriteLanguage(), SORT_BY, getRandomApiKey());
         }
+    }
+
+    public void showNoConnectionMsg() {
+        final Snackbar noConnectionSnackbar = Snackbar.make(findViewById(android.R.id.content), NO_CONNECTION, Snackbar.LENGTH_LONG);
+        noConnectionSnackbar.setAction(NO_CONNECTION_ACTION, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                noConnectionSnackbar.dismiss();
+            }
+        })
+                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                .show();
     }
 }
