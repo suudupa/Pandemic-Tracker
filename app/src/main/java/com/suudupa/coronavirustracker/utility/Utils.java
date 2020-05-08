@@ -1,10 +1,16 @@
 package com.suudupa.coronavirustracker.utility;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -97,5 +103,22 @@ public class Utils {
 
     public static void sortAlphabetical (List<String> regionsList) {
         Collections.sort(regionsList);
+    }
+
+    public static void writeObject(Context context, String fileName, Object object) throws IOException {
+        FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(object);
+        oos.flush();
+        oos.close();
+        fos.close();
+    }
+
+    public static Object readObject(Context context, String fileName) throws IOException, ClassNotFoundException {
+        FileInputStream fis = context.openFileInput(fileName);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        Object object = ois.readObject();
+        fis.close();
+        return object;
     }
 }
