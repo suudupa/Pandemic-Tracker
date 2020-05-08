@@ -38,8 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,14 +90,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private RelativeLayout noArticleLayout;
     private Button noArticleBtnRetry;
 
-    private static String urlEncode(String query) {
-        try {
-            return URLEncoder.encode(query, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getCause());
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -119,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedRegion = parent.getItemAtPosition(position).toString();
                 try {
+                    swipeRefresh.setRefreshing(true);
                     loadData(selectedRegion);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -126,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
@@ -176,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onStop() {
         super.onStop();
-        //reset the selection when the activity is hidden
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
@@ -193,12 +183,23 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         return sharedPreferences.getString(getString(R.string.favoriteRegionKey), GLOBAL);
     }
 
-    private String getLanguage() {
+    private String getSelectedRegion() {
+        String selectedRegion;
+        try {
+            selectedRegion = regionList.getSelectedItem().toString();
+        } catch (NullPointerException e) {
+            selectedRegion = getFavoriteRegion();
+        }
+        return selectedRegion;
+    }
+
+    private String getFavoriteLanguage() {
         return sharedPreferences.getString(getString(R.string.languageKey), "");
     }
 
     private void executeJsonResponse(String region) {
         new JsonResponse().execute(DATA_URL, this, region);
+        swipeRefresh.setRefreshing(true);
     }
 
     public void buildRegionList() {
@@ -223,66 +224,36 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         regionList.setAdapter(dynamicRegionList);
     }
 
-    private String getSelectedRegion() {
-        String selectedRegion;
-        try {
-            selectedRegion = regionList.getSelectedItem().toString();
-        } catch (NullPointerException e) {
-            selectedRegion = getFavoriteRegion();
-        }
-        return selectedRegion;
-    }
-
-    @Override
-    public void onRefresh() {
-        executeJsonResponse(getSelectedRegion());
-    }
-
     public void loadData(String region) throws JSONException {
         errorLayout.setVisibility(View.GONE);
         retrieveData(region);
         loadArticles(region);
+        swipeRefresh.setRefreshing(false);
     }
 
     private void retrieveData(String name) throws JSONException {
         JSONObject region = jsonResponse.getJSONObject(name);
-        casesTextView.setText(formatNumber(region.getString(CASES)));
-        deathsTextView.setText(formatNumber(region.getString(DEATHS)));
-        recoveredTextView.setText(formatNumber(region.getString(RECOVERED)));
+        casesTextView.setText(Utils.formatNumber(region.getString(CASES)));
+        deathsTextView.setText(Utils.formatNumber(region.getString(DEATHS)));
+        recoveredTextView.setText(Utils.formatNumber(region.getString(RECOVERED)));
         String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMP_KEY));
         timestampTextView.setText(TIMESTAMP_TEXT + lastUpdated);
         regionList.setSelection(regions.indexOf(name));
     }
 
-    private String formatNumber(String value) {
-        int number = Integer.parseInt(value);
-        return String.format("%,d", number);
-    }
-
     private void loadArticles(final String region) {
-
-        swipeRefresh.setRefreshing(true);
 
         final Call<ArticleList> articleListCall;
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-
-        final String filename =  region.toLowerCase() + FILE_FORMAT;
         String q;
+
         if (region.equals(GLOBAL)) {
-            q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
-            if (getLanguage().length() == 0) {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
-            } else {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
-            }
+            q = Utils.urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
         } else {
-            q = urlEncode(KEYWORD_1 + AND_OP + region);
-            if (getLanguage().length() == 0) {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), SORT_BY, getRandomApiKey());
-            } else {
-                articleListCall = apiInterface.getLatestArticles(q, Utils.getDate(), getLanguage(), SORT_BY, getRandomApiKey());
-            }
+            q = Utils.urlEncode(KEYWORD_1 + AND_OP + region);
         }
+
+        articleListCall = callApi(apiInterface, q);
 
         articleListCall.enqueue(new Callback<ArticleList>() {
 
@@ -292,70 +263,78 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 if (response.isSuccessful() && response.body().getArticles() != null) {
 
                     noArticleLayout.setVisibility(View.GONE);
-
-                    if (!articles.isEmpty()) {
-                        articles.clear();
-                    }
+                    articles.clear();
 
                     articles = response.body().getArticles();
-                    try {
-                        Utils.writeObject(getApplicationContext(), filename, articles);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (region.equals(GLOBAL) || region.equals(getFavoriteRegion())) {
+                        try {
+                            Utils.writeObject(getApplicationContext(), region.toLowerCase() + FILE_FORMAT, articles);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     if (articles.size() < MIN_ARTICLES) {
                         loadArticles(GLOBAL);
                     }
 
-                    createArticleListAdapter(articles);
+                    setArticleListAdapter();
+                    swipeRefresh.setRefreshing(false);
+                    articleSelectedListener();
 
                 } else {
-                    getArticlesOffline(filename);
+                    getArticlesOffline(region);
                 }
             }
 
             @Override
             public void onFailure(Call<ArticleList> call, Throwable t) {
-                getArticlesOffline(filename);
+                getArticlesOffline(region);
             }
         });
     }
 
-    private void createArticleListAdapter(List<Article> articles) {
+    @Override
+    public void onRefresh() {
+        executeJsonResponse(getSelectedRegion());
+    }
+
+    private void setArticleListAdapter() {
         articleListAdapter = new ArticleListAdapter(articles, MainActivity.this);
         recyclerView.setAdapter(articleListAdapter);
         articleListAdapter.notifyDataSetChanged();
-        articleSelectedListener(articles);
-        topHeadlinesTextView.setVisibility(View.VISIBLE);
-        swipeRefresh.setRefreshing(false);
     }
 
-    private void getArticlesOffline(String file) {
-        List<Article> offlineArticles = null;
+    private void getArticlesOffline(String region) {
         boolean notFound = false;
+        articles.clear();
 
-        try {
-            offlineArticles = (List<Article>) Utils.readObject(getApplicationContext(), file);
-        } catch (IOException | ClassNotFoundException e) {
-            notFound = true;
+        if (region.equals(GLOBAL) || region.equals(getFavoriteRegion())) {
+            try {
+                articles = (List<Article>) Utils.readObject(getApplicationContext(), region.toLowerCase() + FILE_FORMAT);
+            } catch (IOException | ClassNotFoundException e) {
+                notFound = true;
+            }
         }
 
-        if (notFound || offlineArticles == null) {
+        if (notFound || articles == null || articles.isEmpty()) {
             showArticleError();
         } else {
-            createArticleListAdapter(offlineArticles);
+            noArticleLayout.setVisibility(View.GONE);
+            setArticleListAdapter();
+            swipeRefresh.setRefreshing(false);
+            articleSelectedListener();
         }
     }
 
-    private void articleSelectedListener(final List<Article> articleList) {
+    private void articleSelectedListener() {
 
         articleListAdapter.setOnItemClickListener(new ArticleListAdapter.OnItemClickListener() {
 
             @Override
             public void onItemClick(View view, int position) {
 
-                Article article = articleList.get(position);
+                Article article = articles.get(position);
 
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                 intent.putExtra(URL, article.getUrl());
@@ -382,11 +361,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void showArticleError() {
-        topHeadlinesTextView.setVisibility(View.INVISIBLE);
+        setArticleListAdapter();
         makeLayoutVisible(noArticleLayout);
         noArticleBtnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                swipeRefresh.setRefreshing(true);
                 loadArticles(getSelectedRegion());
             }
         });
@@ -396,6 +376,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefresh.setRefreshing(false);
         if (relativeLayout.getVisibility() == View.GONE) {
             relativeLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private Call<ArticleList> callApi(ApiInterface apiInterface, String query) {
+        if (getFavoriteLanguage().length() == 0) {
+            return apiInterface.getLatestArticles(query, Utils.getDate(), SORT_BY, getRandomApiKey());
+        } else {
+            return apiInterface.getLatestArticles(query, Utils.getDate(), getFavoriteLanguage(), SORT_BY, getRandomApiKey());
         }
     }
 }
