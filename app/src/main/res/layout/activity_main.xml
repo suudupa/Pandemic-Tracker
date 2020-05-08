@@ -46,10 +46,22 @@
                         android:id="@+id/regionListSpinner"
                         android:layout_width="320dp"
                         android:layout_height="40dp"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginTop="5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/timestampTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        app:fontFamily="sans-serif-light"
+                        app:layout_constraintTop_toBottomOf="@id/regionListSpinner" />
 
                     <TextView
                         android:id="@+id/casesTitleTextView"
@@ -60,7 +72,7 @@
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/regionListSpinner"
+                        app:layout_constraintTop_toBottomOf="@+id/timestampTextView"
                         app:layout_constraintVertical_bias="0.075" />
 
                     <TextView
@@ -77,7 +89,7 @@
                         android:id="@+id/deathsTitleTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp"
+                        android:layout_marginTop="20dp"
                         android:text="@string/deaths"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +111,7 @@
                         android:id="@+id/recoveredTitleTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp"
+                        android:layout_marginTop="20dp"
                         android:text="@string/recovered"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -118,31 +130,19 @@
                         app:layout_constraintTop_toBottomOf="@+id/recoveredTitleTextView" />
 
                     <TextView
-                        android:id="@+id/timestampTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:gravity="end"
-                        android:textSize="12sp"
-                        app:fontFamily="sans-serif-light"
-                        app:layout_constraintTop_toBottomOf="@id/recoveredTextView" />
-
-                    <TextView
                         android:id="@+id/topHeadlinesTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:gravity="start"
+                        android:layout_marginTop="50dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:gravity="center"
                         android:text="@string/headlinesTitle"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         app:fontFamily="sans-serif-light"
-                        app:layout_constraintTop_toBottomOf="@id/timestampTextView"
+                        app:layout_constraintTop_toBottomOf="@id/recoveredTextView"
                         tools:visibility="invisible" />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -158,9 +158,10 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/timestampTextView"
+                        app:layout_constraintTop_toBottomOf="@id/topHeadlinesTextView"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
+                        android:layout_marginTop="5dp"
                         android:background="@color/colorBackground"
                         android:id="@+id/noResultLayout"
                         android:visibility="gone">
