@@ -4,6 +4,7 @@ public class Resources {
 
     public static final String DATA_URL = "https://pandemictracker.rahulkaranth.com/covid19data.json";
     public static final String REGIONS_FILE = "regions.txt";
+    public static final String FILE_FORMAT = ".json";
     public static final String GLOBAL = "World";
     public static final String CASES = "cases";
     public static final String DEATHS = "deaths";

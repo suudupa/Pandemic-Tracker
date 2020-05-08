@@ -37,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.CASES;
 import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
 import static com.suudupa.coronavirustracker.utility.Resources.DATE;
 import static com.suudupa.coronavirustracker.utility.Resources.DEATHS;
+import static com.suudupa.coronavirustracker.utility.Resources.FILE_FORMAT;
 import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
@@ -257,13 +259,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         return String.format("%,d", number);
     }
 
-    private void loadArticles(String region) {
+    private void loadArticles(final String region) {
 
         swipeRefresh.setRefreshing(true);
 
         final Call<ArticleList> articleListCall;
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
+        final String filename =  region.toLowerCase() + FILE_FORMAT;
         String q;
         if (region.equals(GLOBAL)) {
             q = urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
@@ -295,42 +298,64 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     }
 
                     articles = response.body().getArticles();
+                    try {
+                        Utils.writeObject(getApplicationContext(), filename, articles);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     if (articles.size() < MIN_ARTICLES) {
                         loadArticles(GLOBAL);
                     }
 
-                    articleListAdapter = new ArticleListAdapter(articles, MainActivity.this);
-                    recyclerView.setAdapter(articleListAdapter);
-                    articleListAdapter.notifyDataSetChanged();
-
-                    articleSelectedListener();
-
-                    topHeadlinesTextView.setVisibility(View.VISIBLE);
-                    swipeRefresh.setRefreshing(false);
+                    createArticleListAdapter(articles);
 
                 } else {
-                    topHeadlinesTextView.setVisibility(View.INVISIBLE);
-                    showArticleError();
+                    getArticlesOffline(filename);
                 }
             }
 
             @Override
             public void onFailure(Call<ArticleList> call, Throwable t) {
-                topHeadlinesTextView.setVisibility(View.INVISIBLE);
-                showArticleError();
+                getArticlesOffline(filename);
             }
         });
     }
 
-    private void articleSelectedListener() {
+    private void createArticleListAdapter(List<Article> articles) {
+        articleListAdapter = new ArticleListAdapter(articles, MainActivity.this);
+        recyclerView.setAdapter(articleListAdapter);
+        articleListAdapter.notifyDataSetChanged();
+        articleSelectedListener(articles);
+        topHeadlinesTextView.setVisibility(View.VISIBLE);
+        swipeRefresh.setRefreshing(false);
+    }
+
+    private void getArticlesOffline(String file) {
+        List<Article> offlineArticles = null;
+        boolean notFound = false;
+
+        try {
+            offlineArticles = (List<Article>) Utils.readObject(getApplicationContext(), file);
+        } catch (IOException | ClassNotFoundException e) {
+            notFound = true;
+        }
+
+        if (notFound || offlineArticles == null) {
+            showArticleError();
+        } else {
+            createArticleListAdapter(offlineArticles);
+        }
+    }
+
+    private void articleSelectedListener(final List<Article> articleList) {
 
         articleListAdapter.setOnItemClickListener(new ArticleListAdapter.OnItemClickListener() {
 
             @Override
             public void onItemClick(View view, int position) {
 
-                Article article = articles.get(position);
+                Article article = articleList.get(position);
 
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                 intent.putExtra(URL, article.getUrl());
@@ -357,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void showArticleError() {
+        topHeadlinesTextView.setVisibility(View.INVISIBLE);
         makeLayoutVisible(noArticleLayout);
         noArticleBtnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
