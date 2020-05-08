@@ -201,8 +201,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void executeJsonResponse(String region) {
-        new JsonResponse().execute(DATA_URL, this, region);
         swipeRefresh.setRefreshing(true);
+        new JsonResponse().execute(DATA_URL, this, region);
     }
 
     public void buildRegionList() {
@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void showNoConnectionMsg() {
-        final Snackbar noConnectionSnackbar = Snackbar.make(findViewById(android.R.id.content), NO_CONNECTION, Snackbar.LENGTH_LONG);
+        final Snackbar noConnectionSnackbar = Snackbar.make(findViewById(android.R.id.content), NO_CONNECTION, Snackbar.LENGTH_INDEFINITE);
         noConnectionSnackbar.setAction(NO_CONNECTION_ACTION, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
