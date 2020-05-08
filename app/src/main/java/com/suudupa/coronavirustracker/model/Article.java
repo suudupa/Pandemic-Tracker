@@ -2,7 +2,7 @@ package com.suudupa.coronavirustracker.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Article {
+public class Article implements java.io.Serializable {
 
     @SerializedName("source")
     private Source source;
