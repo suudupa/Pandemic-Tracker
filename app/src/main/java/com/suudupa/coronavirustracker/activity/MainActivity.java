@@ -326,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             noArticleLayout.setVisibility(View.GONE);
             setArticleListAdapter();
             swipeRefresh.setRefreshing(false);
+            showNoConnectionMsg();
             articleSelectedListener();
         }
     }
