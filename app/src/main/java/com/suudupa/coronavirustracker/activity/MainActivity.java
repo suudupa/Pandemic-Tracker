@@ -65,14 +65,13 @@ import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
 import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_KEY;
-import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_TEXT;
 import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
 import static com.suudupa.coronavirustracker.utility.Resources.URL;
 import static com.suudupa.coronavirustracker.utility.Utils.getRandomApiKey;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
-    public static List<String> regions = new ArrayList<String>();
+    public static List<String> regions = new ArrayList<>();
     public JSONObject jsonResponse;
     private JSONArray jsonNames;
     private TextView casesTextView;
@@ -80,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private TextView recoveredTextView;
     private TextView timestampTextView;
     private TextView topHeadlinesTextView;
+    private TextView noResultMsgTextView;
     private SwipeRefreshLayout swipeRefresh;
     private SharedPreferences sharedPreferences;
     private SearchableSpinner regionList;
@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private NavigationView navigationView;
     Snackbar noConnectionSnackbar;
     private RelativeLayout errorLayout;
-    private Button btnRetry;
     private RelativeLayout noArticleLayout;
+    private Button btnRetry;
     private Button noArticleBtnRetry;
 
     @Override
@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recoveredTextView = findViewById(R.id.recoveredTextView);
         timestampTextView = findViewById(R.id.timestampTextView);
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
+        noResultMsgTextView = findViewById(R.id.noResultMessage);
         regionList = findViewById(R.id.regionListSpinner);
         recyclerView = findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void setupSpinner() {
-        ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions);
+        ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, regions);
         regionList.setAdapter(dynamicRegionList);
     }
 
@@ -241,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         deathsTextView.setText(Utils.formatNumber(region.getString(DEATHS)));
         recoveredTextView.setText(Utils.formatNumber(region.getString(RECOVERED)));
         String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMP_KEY));
-        timestampTextView.setText(TIMESTAMP_TEXT + lastUpdated);
+        timestampTextView.setText(getResources().getString(R.string.timestampTitle, lastUpdated));
         regionList.setSelection(regions.indexOf(name));
     }
 
@@ -258,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
 
         articleListCall = callApi(apiInterface, q);
-        topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle) + region);
+        topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
         articleListCall.enqueue(new Callback<ArticleList>() {
 
             @Override
@@ -323,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
 
         if (notFound || articles == null || articles.isEmpty()) {
-            showArticleError();
+            showArticleError(region);
         } else {
             noArticleLayout.setVisibility(View.GONE);
             setArticleListAdapter();
@@ -366,8 +367,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
 
-    private void showArticleError() {
+    private void showArticleError(String region) {
         setArticleListAdapter();
+        noResultMsgTextView.setText(getResources().getString(R.string.noResultText, region));
         makeLayoutVisible(noArticleLayout);
         noArticleBtnRetry.setOnClickListener(new View.OnClickListener() {
             @Override

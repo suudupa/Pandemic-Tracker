@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Pandemic Tracker</string>
-    <string name="headlinesTitle">Top Headlines:\u0020</string>
+    <string name="headlinesTitle">Top Headlines: %1$s</string>
+    <string name="timestampTitle">Last updated: %1$s</string>
     <string name="errorTitle">Oops!</string>
     <string name="noResultTitle">Uh oh!</string>
     <string name="settingsTitle">Settings</string>
@@ -15,7 +16,7 @@
     <string name="languageKey">languageKey</string>
 
     <string name="errorText">No Internet connection found. Check your connection or try again.</string>
-    <string name="noResultText">No articles found. This could be an internal server error or a network failure. Please try again.</string>
+    <string name="noResultText">No articles found for %1$s. This could be an internal server error or a network failure. Please try again.</string>
     <string name="imageText">No Internet connection</string>
     <string name="noResultImageText">No articles found</string>
     <string name="retryText">Retry</string>

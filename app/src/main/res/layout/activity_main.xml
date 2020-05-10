@@ -185,7 +185,6 @@
 
                         <TextView
                             android:id="@+id/noResultMessage"
-                            android:text="@string/noResultText"
                             android:textColor="@color/colorTextSubtitle"
                             android:layout_centerHorizontal="true"
                             android:layout_below="@id/noResultTitle"

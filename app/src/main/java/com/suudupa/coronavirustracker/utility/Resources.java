@@ -10,7 +10,6 @@ public class Resources {
     public static final String DEATHS = "deaths";
     public static final String RECOVERED = "recovered";
     public static final String TIMESTAMP_KEY = "last_updated";
-    public static final String TIMESTAMP_TEXT = "Last updated: ";
     public static final String NO_CONNECTION = "No Internet Connection";
     public static final String NO_CONNECTION_ACTION = "DISMISS";
     public static final String API_KEY_1 = "8adc6c6586d44ce49ee3a170649ec33b";
