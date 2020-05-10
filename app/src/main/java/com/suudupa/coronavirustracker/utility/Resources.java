@@ -15,7 +15,9 @@ public class Resources {
     public static final String API_KEY_1 = "8adc6c6586d44ce49ee3a170649ec33b";
     public static final String API_KEY_2 = "66fbfc3fa8a44467ae93c9d59d8edf7e";
     public static final String API_KEY_3 = "2ababc39711d4f3f9825b7a310d887f9";
-    public static final String API_KEYS[] = {API_KEY_1, API_KEY_2, API_KEY_3};
+    public static final String API_KEY_4 = "598f676618b742b6ac5ed52a4db989e4";
+    public static final String API_KEY_5 = "1e2de1f8c1fc40868687a5b955896bfd";
+    public static final String[] API_KEYS = {API_KEY_1, API_KEY_2, API_KEY_3, API_KEY_4, API_KEY_5};
     public static final String KEYWORD_1 = "coronavirus";
     public static final String KEYWORD_2 = "covid-19";
     public static final String OR_OP = " OR ";
