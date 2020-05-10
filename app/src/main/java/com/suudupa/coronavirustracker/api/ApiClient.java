@@ -3,9 +3,9 @@ package com.suudupa.coronavirustracker.api;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiClient {
+import static com.suudupa.coronavirustracker.utility.Resources.NEWS_API_URL;
 
-    public static final String NEWS_API_URL = "https://newsapi.org/v2/";
+public class ApiClient {
 
     private static Retrofit retrofit = null;
 

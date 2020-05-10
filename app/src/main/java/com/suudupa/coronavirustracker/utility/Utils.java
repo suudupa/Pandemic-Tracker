@@ -16,7 +16,6 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -24,11 +23,10 @@ import java.util.Locale;
 import java.util.Random;
 
 import static com.suudupa.coronavirustracker.utility.Resources.API_KEYS;
-import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 
 public class Utils {
 
-    public static ColorDrawable[] vibrantLightColorList =
+    private static ColorDrawable[] vibrantLightColorList =
             {
                     new ColorDrawable(Color.parseColor("#ffeead")),
                     new ColorDrawable(Color.parseColor("#93cfb3")),
@@ -50,20 +48,9 @@ public class Utils {
         return API_KEYS[index];
     }
 
-    public static String getCountry() {
+    private static String getCountry() {
         Locale locale = Locale.getDefault();
         return locale.getCountry().toLowerCase();
-    }
-
-    public static String[] getCountryList() {
-        String[] countryCodes = Locale.getISOCountries();
-        List<String> countryNames = new ArrayList<>();
-        countryNames.add(GLOBAL);
-        for (String countryCode : countryCodes) {
-            Locale locale = new Locale("", countryCode);
-            countryNames.add(locale.getDisplayCountry());
-        }
-        return countryNames.toArray(new String[countryNames.size()]);
     }
 
     public static String getDate() {

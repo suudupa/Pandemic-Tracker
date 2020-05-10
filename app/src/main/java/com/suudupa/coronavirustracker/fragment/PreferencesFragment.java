@@ -25,7 +25,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupFavoriteRegionPreference() {
         final ListPreference favoriteRegionPreference = findPreference(getString(R.string.favoriteRegionKey));
-        List<String> allRegions = new ArrayList<String>(MainActivity.regions);
+        List<String> allRegions = new ArrayList<>(MainActivity.regions);
         Utils.sortAlphabetical(allRegions);
         String [] regions = allRegions.toArray(new String[0]);
         favoriteRegionPreference.setEntries(regions);
