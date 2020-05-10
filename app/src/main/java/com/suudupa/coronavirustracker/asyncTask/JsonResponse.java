@@ -72,6 +72,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        mainActivityContext.dismissNoConnectionMsg();
         getData(region);
     }
 

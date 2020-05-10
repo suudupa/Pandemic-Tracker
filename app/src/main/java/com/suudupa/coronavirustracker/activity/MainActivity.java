@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private List<Article> articles = new ArrayList<>();
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    Snackbar noConnectionSnackbar;
     private RelativeLayout errorLayout;
     private Button btnRetry;
     private RelativeLayout noArticleLayout;
@@ -266,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 if (response.isSuccessful() && response.body().getArticles() != null) {
 
                     noArticleLayout.setVisibility(View.GONE);
+                    dismissNoConnectionMsg();
                     articles.clear();
 
                     articles = response.body().getArticles();
@@ -392,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void showNoConnectionMsg() {
-        final Snackbar noConnectionSnackbar = Snackbar.make(findViewById(android.R.id.content), NO_CONNECTION, Snackbar.LENGTH_INDEFINITE);
+        noConnectionSnackbar = Snackbar.make(findViewById(android.R.id.content), NO_CONNECTION, Snackbar.LENGTH_INDEFINITE);
         noConnectionSnackbar.setAction(NO_CONNECTION_ACTION, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -401,5 +403,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         })
                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                 .show();
+    }
+
+    public void dismissNoConnectionMsg() {
+        if (noConnectionSnackbar != null && noConnectionSnackbar.isShown()) {
+            noConnectionSnackbar.dismiss();
+        }
     }
 }
