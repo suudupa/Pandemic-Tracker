@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,11 +25,13 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.adapter.ArticleListAdapter;
+import com.suudupa.coronavirustracker.adapter.RegionListAdapter;
 import com.suudupa.coronavirustracker.api.ApiClient;
 import com.suudupa.coronavirustracker.api.ApiInterface;
 import com.suudupa.coronavirustracker.asyncTask.JsonResponse;
 import com.suudupa.coronavirustracker.model.Article;
 import com.suudupa.coronavirustracker.model.ArticleList;
+import com.suudupa.coronavirustracker.model.Region;
 import com.suudupa.coronavirustracker.utility.Utils;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -84,8 +85,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private SharedPreferences sharedPreferences;
     private SearchableSpinner regionList;
     private RecyclerView recyclerView;
-    private ArrayAdapter regionListAdapter;
+    private RegionListAdapter regionListAdapter;
     private ArticleListAdapter articleListAdapter;
+    private ArrayList<Region> regionItems = new ArrayList<>();
     private List<Article> articles = new ArrayList<>();
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -112,10 +114,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedRegion = parent.getItemAtPosition(position).toString();
+                Region selectedRegion = (Region) parent.getItemAtPosition(position);
+                String regionName = selectedRegion.getName();
                 try {
                     swipeRefresh.setRefreshing(true);
-                    loadData(selectedRegion);
+                    loadData(regionName);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -137,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
         noResultMsgTextView = findViewById(R.id.noResultMessage);
         regionList = findViewById(R.id.regionListSpinner);
-        regionListAdapter = new ArrayAdapter(this, R.layout.region_list, R.id.regionName);
         recyclerView = findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
@@ -210,25 +212,26 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void buildRegionList() {
-        JSONArray oldJsonNames = jsonNames;
         jsonNames = jsonResponse.names();
-        if (oldJsonNames == null || (oldJsonNames.hashCode() != jsonNames.hashCode())) {
-            regions.clear();
-            for (int i = 0; i < jsonNames.length() - 1; i++) {
-                try {
-                    String region = jsonNames.getString(i);
-                    regions.add(region);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        regions.clear();
+        regionItems.clear();
+        for (int i = 0; i < jsonNames.length() - 1; i++) {
+            try {
+                String region = jsonNames.getString(i);
+                String cases = Utils.formatNumber(jsonResponse.getJSONObject(region).getString(CASES));
+                regions.add(region);
+                regionItems.add(new Region(region, cases));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            setupSpinner();
         }
+        setupSpinner();
     }
 
     public void setupSpinner() {
-        ArrayAdapter<String> dynamicRegionList = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, regions);
-        regionList.setAdapter(dynamicRegionList);
+        regionListAdapter = new RegionListAdapter(this, regionItems);
+        regionList.setAdapter(regionListAdapter);
+        regionListAdapter.notifyDataSetChanged();
     }
 
     public void loadData(String region) throws JSONException {

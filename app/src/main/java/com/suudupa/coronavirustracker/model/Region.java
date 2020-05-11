@@ -1,25 +1,25 @@
 package com.suudupa.coronavirustracker.model;
 
-public class Region {
+import com.google.gson.annotations.SerializedName;
 
+public class Region implements java.io.Serializable {
+
+    @SerializedName("name")
     private String name;
-    private String newCases;
 
-    public Region(String name) {
-        this.name = name;
-        this.newCases = "";
-    }
+    @SerializedName("cases")
+    private String cases;
 
-    public Region(String name, String newCases) {
+    public Region(String name, String cases) {
         this.name = name;
-        this.newCases = "+" + newCases;
+        this.cases = cases;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getNewCases() {
-        return newCases;
+    public String getCases() {
+        return cases;
     }
 }
