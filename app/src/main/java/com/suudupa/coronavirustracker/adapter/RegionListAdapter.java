@@ -17,31 +17,23 @@ import java.util.ArrayList;
 
 public class RegionListAdapter extends ArrayAdapter<Region> {
 
-    private LayoutInflater layoutInflater;
-
     public RegionListAdapter(Context context, ArrayList<Region> regionItems) {
         super(context, 0, regionItems);
-        this.layoutInflater  = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
-        ViewHolder holder;
-
         if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = layoutInflater.inflate(R.layout.region_list, null);
-            holder.regionName = convertView.findViewById(R.id.regionName);
-            convertView.setTag(R.layout.region_list, holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag(R.layout.region_list);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.region_list, parent, false);
         }
+
+        TextView regionName = convertView.findViewById(R.id.regionName);
 
         Region regionItem = getItem(position);
         if (regionItem != null) {
-            holder.regionName.setText(regionItem.getName());
+            regionName.setText(regionItem.getName());
         }
 
         return convertView;
@@ -50,33 +42,19 @@ public class RegionListAdapter extends ArrayAdapter<Region> {
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        DropDownViewHolder holder;
-
         if (convertView == null) {
-            holder = new DropDownViewHolder();
-            convertView = layoutInflater.inflate(R.layout.region_list, null);
-            holder.regionName = convertView.findViewById(R.id.regionName);
-            holder.regionCases = convertView.findViewById(R.id.regionCases);
-            convertView.setTag(R.layout.region_list, holder);
-        } else {
-            holder = (DropDownViewHolder) convertView.getTag(R.layout.region_list);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.region_list, parent, false);
         }
+
+        TextView regionName = convertView.findViewById(R.id.regionName);
+        TextView regionCases = convertView.findViewById(R.id.regionCases);
 
         Region regionItem = getItem(position);
         if (regionItem != null) {
-            holder.regionName.setText(regionItem.getName());
-            holder.regionCases.setText(regionItem.getCases());
+            regionName.setText(regionItem.getName());
+            regionCases.setText(regionItem.getCases());
         }
 
         return convertView;
-    }
-
-    private static class ViewHolder {
-        TextView regionName;
-    }
-
-    private static class DropDownViewHolder {
-        TextView regionName;
-        TextView regionCases;
     }
 }

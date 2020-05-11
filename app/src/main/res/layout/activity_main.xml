@@ -42,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <Spinner
                         android:id="@+id/regionListSpinner"
                         android:layout_width="320dp"
                         android:layout_height="40dp"
