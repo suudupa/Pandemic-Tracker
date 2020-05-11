@@ -7,7 +7,9 @@ public class Resources {
     public static final String FILE_FORMAT = ".json";
     public static final String GLOBAL = "World";
     public static final String CASES = "cases";
+    public static final String NEW_CASES = "cases_new";
     public static final String DEATHS = "deaths";
+    public static final String NEW_DEATHS = "deaths_new";
     public static final String RECOVERED = "recovered";
     public static final String TIMESTAMP_KEY = "last_updated";
     public static final String NO_CONNECTION = "No Internet Connection";

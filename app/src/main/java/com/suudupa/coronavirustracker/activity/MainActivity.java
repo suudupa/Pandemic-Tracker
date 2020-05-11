@@ -58,6 +58,8 @@ import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
 import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
+import static com.suudupa.coronavirustracker.utility.Resources.NEW_CASES;
+import static com.suudupa.coronavirustracker.utility.Resources.NEW_DEATHS;
 import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION;
 import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION_ACTION;
 import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
@@ -75,7 +77,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public JSONObject jsonResponse;
     private JSONArray jsonNames;
     private TextView casesTextView;
+    private TextView newCasesTextView;
     private TextView deathsTextView;
+    private TextView newDeathsTextView;
     private TextView recoveredTextView;
     private TextView timestampTextView;
     private TextView topHeadlinesTextView;
@@ -130,7 +134,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefresh.setOnRefreshListener(this);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent);
         casesTextView = findViewById(R.id.casesTextView);
+        newCasesTextView = findViewById(R.id.newCasesTextView);
         deathsTextView = findViewById(R.id.deathsTextView);
+        newDeathsTextView = findViewById(R.id.newDeathsTextView);
         recoveredTextView = findViewById(R.id.recoveredTextView);
         timestampTextView = findViewById(R.id.timestampTextView);
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
@@ -239,7 +245,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private void retrieveData(String name) throws JSONException {
         JSONObject region = jsonResponse.getJSONObject(name);
         casesTextView.setText(Utils.formatNumber(region.getString(CASES)));
+        newCasesTextView.setText(Utils.formatNumber(region.getString(NEW_CASES), "+"));
         deathsTextView.setText(Utils.formatNumber(region.getString(DEATHS)));
+        newDeathsTextView.setText(Utils.formatNumber(region.getString(NEW_DEATHS), "+"));
         recoveredTextView.setText(Utils.formatNumber(region.getString(RECOVERED)));
         String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMP_KEY));
         timestampTextView.setText(getResources().getString(R.string.timestampTitle, lastUpdated));

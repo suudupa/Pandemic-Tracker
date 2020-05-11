@@ -150,8 +150,8 @@
                                 android:textStyle="bold"
                                 app:layout_constraintTop_toBottomOf="@+id/recoveredTitleTextView" />
                         </LinearLayout>
-                    </LinearLayout>
 
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/topHeadlinesTextView"

@@ -95,6 +95,12 @@ public class Utils {
         return String.format("%,d", number);
     }
 
+    public static String formatNumber(String value, String op) {
+        int number = Integer.parseInt(value);
+        if (number == 0) { return ""; }
+        else { return op + String.format("%,d", number); }
+    }
+
     public static String urlEncode(String query) {
         try {
             return URLEncoder.encode(query, "UTF-8");
