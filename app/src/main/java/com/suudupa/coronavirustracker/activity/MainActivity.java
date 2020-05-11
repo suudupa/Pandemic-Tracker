@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private SharedPreferences sharedPreferences;
     private SearchableSpinner regionList;
     private RecyclerView recyclerView;
+    private ArrayAdapter regionListAdapter;
     private ArticleListAdapter articleListAdapter;
     private List<Article> articles = new ArrayList<>();
     private DrawerLayout drawer;
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
         noResultMsgTextView = findViewById(R.id.noResultMessage);
         regionList = findViewById(R.id.regionListSpinner);
+        regionListAdapter = new ArrayAdapter(this, R.layout.region_list, R.id.regionName);
         recyclerView = findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
