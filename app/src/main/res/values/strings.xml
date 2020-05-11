@@ -47,5 +47,6 @@
     </string-array>
     <string name="language_default_value">""</string>
     <string name="region_default_value">"World"</string>
+    <string name="article_header_image">Article header image</string>
 
 </resources>

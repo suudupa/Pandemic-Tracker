@@ -6,12 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -26,6 +21,10 @@ import com.suudupa.coronavirustracker.model.Article;
 import com.suudupa.coronavirustracker.utility.Utils;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.MyViewHolder> {
 
@@ -64,13 +63,11 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        holder.progressBar.setVisibility(View.GONE);
                         return false;
                     }
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        holder.progressBar.setVisibility(View.GONE);
                         return false;
                     }
                 })
@@ -102,7 +99,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
         TextView title, description, author, publishedAt, source, time;
         ImageView imageView;
-        ProgressBar progressBar;
         OnItemClickListener onItemClickListener;
 
         public MyViewHolder(View listView, OnItemClickListener onItemClickListener) {
@@ -116,7 +112,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             source = itemView.findViewById(R.id.source);
             time = itemView.findViewById(R.id.time);
             imageView = itemView.findViewById(R.id.img);
-            progressBar = itemView.findViewById(R.id.prograss_load_photo);
             this.onItemClickListener = onItemClickListener;
         }
 
