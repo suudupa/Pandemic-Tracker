@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -24,4 +25,7 @@
         <item name="backgroundColor">@color/colorPrimary</item>
     </style>
 
+    <style name="mySpinnerItemStyle" parent="@android:style/Widget.Spinner">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 </resources>

@@ -29,7 +29,7 @@
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
 
-    <string name="cases">Coronavirus Cases:</string>
+    <string name="cases">Cases:</string>
     <string name="deaths">Deaths:</string>
     <string name="recovered">Recovered:</string>
 
