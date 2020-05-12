@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.model.Region;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class RegionListAdapter extends ArrayAdapter<Region> {
 
@@ -26,7 +26,7 @@ public class RegionListAdapter extends ArrayAdapter<Region> {
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.region_list, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.spinner_region_main, parent, false);
         }
 
         TextView regionName = convertView.findViewById(R.id.regionName);

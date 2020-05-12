@@ -9,8 +9,7 @@
             android:dialogTitle="@string/favoriteRegionDialogTitle"
             android:defaultValue="@string/region_default_value"
             android:summary="@string/favoriteRegionText"
-            android:key="@string/favoriteRegionKey"
-            style="@style/listPreferenceStyle" />
+            android:key="@string/favoriteRegionKey" />
 
         <ListPreference
             android:title="@string/languageTitle"
@@ -19,16 +18,14 @@
             android:entryValues="@array/language_values"
             android:defaultValue="@string/language_default_value"
             android:summary="@string/languageText"
-            android:key="@string/languageKey"
-            style="@style/listPreferenceStyle" />
-
-        <androidx.preference.SwitchPreferenceCompat
-            android:title="@string/darkModeTitle"
-            android:defaultValue="false"
-            android:summary="@string/darkModeText"
-            android:key="@string/darkModeKey"
-            style="@style/listPreferenceStyle" />
-
+            android:key="@string/languageKey" />
+        <!--
+                <androidx.preference.SwitchPreferenceCompat
+                    android:title="@string/darkModeTitle"
+                    android:defaultValue="false"
+                    android:summary="@string/darkModeText"
+                    android:key="@string/darkModeKey" />
+        -->
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

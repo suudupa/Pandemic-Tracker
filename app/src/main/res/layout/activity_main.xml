@@ -43,13 +43,16 @@
 
                     <Spinner
                         android:id="@+id/regionListSpinner"
-                        android:layout_width="320dp"
+                        android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="5dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:textColor="@android:color/white"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/SpinnerStyle" />
 
                     <TextView
                         android:id="@+id/timestampTextView"
@@ -84,7 +87,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/cases"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"
+                                style="@style/Subtitles" />
 
                             <TextView
                                 android:id="@+id/casesTextView"
@@ -92,13 +96,14 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
-                                app:layout_constraintTop_toBottomOf="@+id/casesTitleTextView" />
+                                style="@style/Cases" />
 
                             <TextView
                                 android:id="@+id/newCasesTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="15sp" />
+                                android:textSize="15sp"
+                                style="@style/newCases" />
 
                         </LinearLayout>
 
@@ -113,7 +118,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/deaths"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"
+                                style="@style/Subtitles" />
 
                             <TextView
                                 android:id="@+id/deathsTextView"
@@ -121,13 +127,14 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
-                                app:layout_constraintTop_toBottomOf="@+id/deathsTitleTextView" />
+                                style="@style/Cases" />
 
                             <TextView
                                 android:id="@+id/newDeathsTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="15sp" />
+                                android:textSize="15sp"
+                                style="@style/newCases" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -140,7 +147,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/recovered"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"
+                                style="@style/Subtitles" />
 
                             <TextView
                                 android:id="@+id/recoveredTextView"
@@ -148,7 +156,8 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
-                                app:layout_constraintTop_toBottomOf="@+id/recoveredTitleTextView" />
+                                app:layout_constraintTop_toBottomOf="@+id/recoveredTitleTextView"
+                                style="@style/Cases" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -158,14 +167,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:layout_marginTop="50dp"
+                        android:layout_marginTop="30dp"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:gravity="center"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         app:fontFamily="sans-serif-light"
-                        app:layout_constraintTop_toBottomOf="@id/cases_summary" />
+                        app:layout_constraintTop_toBottomOf="@id/cases_summary"
+                        style="@style/Subtitles" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
@@ -297,9 +307,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="false"
-
         android:layout_marginTop="?android:attr/actionBarSize"
         app:headerLayout="@layout/navigation_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer"
+        style="@style/navigationDrawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
