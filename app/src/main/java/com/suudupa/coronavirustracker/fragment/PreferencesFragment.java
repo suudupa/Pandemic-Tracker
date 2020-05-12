@@ -62,7 +62,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void showToast(String newValue) {
-        Toast.makeText(getContext(), "Selected " + newValue, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), newValue + " Selected", Toast.LENGTH_SHORT).show();
     }
 
     private String getCorrespondingEntry(ListPreference listPreference, String entryValue) {
