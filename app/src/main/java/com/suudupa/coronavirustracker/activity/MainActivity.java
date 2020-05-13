@@ -94,11 +94,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Region selectedRegion = (Region) parent.getItemAtPosition(position);
-                String regionName = selectedRegion.getName();
+                String selectedRegion = parent.getItemAtPosition(position).toString();
                 try {
                     swipeRefresh.setRefreshing(true);
-                    loadData(regionName);
+                    loadData(selectedRegion);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
