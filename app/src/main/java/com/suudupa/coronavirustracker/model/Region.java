@@ -22,4 +22,9 @@ public class Region implements java.io.Serializable {
     public String getCases() {
         return cases;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

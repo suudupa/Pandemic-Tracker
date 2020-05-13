@@ -47,36 +47,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.suudupa.coronavirustracker.utility.Resources.AND_OP;
-import static com.suudupa.coronavirustracker.utility.Resources.AUTHOR;
-import static com.suudupa.coronavirustracker.utility.Resources.CASES;
-import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
-import static com.suudupa.coronavirustracker.utility.Resources.DATE;
-import static com.suudupa.coronavirustracker.utility.Resources.DEATHS;
-import static com.suudupa.coronavirustracker.utility.Resources.FILE_FORMAT;
-import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
-import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
-import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
-import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
-import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
-import static com.suudupa.coronavirustracker.utility.Resources.NEW_CASES;
-import static com.suudupa.coronavirustracker.utility.Resources.NEW_DEATHS;
-import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION;
-import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION_ACTION;
-import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
-import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
-import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
-import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
-import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_KEY;
-import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
-import static com.suudupa.coronavirustracker.utility.Resources.URL;
+import static com.suudupa.coronavirustracker.utility.Resources.*;
 import static com.suudupa.coronavirustracker.utility.Utils.getRandomApiKey;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
     public static List<String> regions = new ArrayList<>();
     public JSONObject jsonResponse;
-    private JSONArray jsonNames;
     private TextView casesTextView;
     private TextView newCasesTextView;
     private TextView deathsTextView;
@@ -89,13 +66,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private SharedPreferences sharedPreferences;
     private Spinner regionList;
     private RecyclerView recyclerView;
-    private RegionListAdapter regionListAdapter;
     private ArticleListAdapter articleListAdapter;
     private ArrayList<Region> regionItems = new ArrayList<>();
     private List<Article> articles = new ArrayList<>();
     private DrawerLayout drawer;
     private NavigationView navigationView;
-    Snackbar noConnectionSnackbar;
+    Snackbar noConnectionSnackBar;
     private RelativeLayout errorLayout;
     private RelativeLayout noArticleLayout;
     private Button btnRetry;
@@ -218,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void buildRegionList() {
-        jsonNames = jsonResponse.names();
+        JSONArray jsonNames = jsonResponse.names();
         regions.clear();
         regionItems.clear();
         for (int i = 0; i < jsonNames.length() - 1; i++) {
@@ -235,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void setupSpinner() {
-        regionListAdapter = new RegionListAdapter(this, regionItems);
+        RegionListAdapter regionListAdapter = new RegionListAdapter(this, regionItems);
         regionList.setAdapter(regionListAdapter);
         regionListAdapter.notifyDataSetChanged();
     }
@@ -409,11 +385,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void showNoConnectionMsg() {
-        noConnectionSnackbar = Snackbar.make(findViewById(android.R.id.content), NO_CONNECTION, Snackbar.LENGTH_INDEFINITE);
-        noConnectionSnackbar.setAction(NO_CONNECTION_ACTION, new View.OnClickListener() {
+        noConnectionSnackBar = Snackbar.make(findViewById(android.R.id.content), NO_CONNECTION, Snackbar.LENGTH_INDEFINITE);
+        noConnectionSnackBar.setAction(NO_CONNECTION_ACTION, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                noConnectionSnackbar.dismiss();
+                noConnectionSnackBar.dismiss();
             }
         })
                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
@@ -421,8 +397,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     public void dismissNoConnectionMsg() {
-        if (noConnectionSnackbar != null && noConnectionSnackbar.isShown()) {
-            noConnectionSnackbar.dismiss();
+        if (noConnectionSnackBar != null && noConnectionSnackBar.isShown()) {
+            noConnectionSnackBar.dismiss();
         }
     }
 }

@@ -16,9 +16,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-
-import static com.suudupa.coronavirustracker.utility.Resources.REGIONS_FILE;
 
 public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
@@ -108,9 +105,8 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
     private void getData(String region) {
         mainActivityContext.buildRegionList();
         try {
-            Utils.writeObject(mainActivityContext.getApplicationContext(), REGIONS_FILE, MainActivity.regions);
             mainActivityContext.loadData(region);
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -118,29 +114,10 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
     private void getData(String json, String region) {
         try {
             mainActivityContext.jsonResponse = new JSONObject(json);
-            getLatestRegionList();
+            mainActivityContext.buildRegionList();
             mainActivityContext.loadData(region);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void getLatestRegionList() {
-        List<String> regionList = null;
-        boolean notFound = false;
-
-        try {
-            regionList = (List<String>) Utils.readObject(mainActivityContext.getApplicationContext(), REGIONS_FILE);
-        } catch (IOException | ClassNotFoundException e) {
-            notFound = true;
-        }
-
-        if (notFound || regionList == null) {
-            mainActivityContext.buildRegionList();
-        }
-        else {
-            MainActivity.regions = regionList;
-            mainActivityContext.setupSpinner();
         }
     }
 }
