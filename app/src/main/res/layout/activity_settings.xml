@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="10dp"
         android:layout_marginTop="?attr/actionBarSize"
         tools:context=".activity.SettingsActivity">
 
@@ -38,14 +39,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@string/aboutTitle"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:textStyle="bold"
+                style="@style/Cases" />
 
             <TextView
                 android:id="@+id/aboutText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="@string/aboutText" />
+                android:text="@string/aboutText"
+                style="@style/descriptions" />
 
         </LinearLayout>
 
@@ -53,7 +57,9 @@
             android:id="@+id/preferences"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:layout_marginStart="-70dp"
+            android:layout_marginEnd="-20dp" />
 
     </LinearLayout>
 

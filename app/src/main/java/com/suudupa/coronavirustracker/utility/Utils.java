@@ -1,14 +1,21 @@
 package com.suudupa.coronavirustracker.utility;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -16,11 +23,10 @@ import java.util.Locale;
 import java.util.Random;
 
 import static com.suudupa.coronavirustracker.utility.Resources.API_KEYS;
-import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 
 public class Utils {
 
-    public static ColorDrawable[] vibrantLightColorList =
+    private static ColorDrawable[] vibrantLightColorList =
             {
                     new ColorDrawable(Color.parseColor("#ffeead")),
                     new ColorDrawable(Color.parseColor("#93cfb3")),
@@ -42,20 +48,9 @@ public class Utils {
         return API_KEYS[index];
     }
 
-    public static String getCountry() {
+    private static String getCountry() {
         Locale locale = Locale.getDefault();
         return locale.getCountry().toLowerCase();
-    }
-
-    public static String[] getCountryList() {
-        String[] countryCodes = Locale.getISOCountries();
-        List<String> countryNames = new ArrayList<>();
-        countryNames.add(GLOBAL);
-        for (String countryCode : countryCodes) {
-            Locale locale = new Locale("", countryCode);
-            countryNames.add(locale.getDisplayCountry());
-        }
-        return countryNames.toArray(new String[countryNames.size()]);
     }
 
     public static String getDate() {
@@ -95,7 +90,43 @@ public class Utils {
         return dateFormatter.format(date);
     }
 
+    public static String formatNumber(String value) {
+        int number = Integer.parseInt(value);
+        return String.format("%,d", number);
+    }
+
+    public static String formatNumber(String value, String op) {
+        int number = Integer.parseInt(value);
+        if (number == 0) { return ""; }
+        else { return op + String.format("%,d", number); }
+    }
+
+    public static String urlEncode(String query) {
+        try {
+            return URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getCause());
+        }
+    }
+
     public static void sortAlphabetical (List<String> regionsList) {
         Collections.sort(regionsList);
+    }
+
+    public static void writeObject(Context context, String fileName, Object object) throws IOException {
+        FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(object);
+        oos.flush();
+        oos.close();
+        fos.close();
+    }
+
+    public static Object readObject(Context context, String fileName) throws IOException, ClassNotFoundException {
+        FileInputStream fis = context.openFileInput(fileName);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        Object object = ois.readObject();
+        fis.close();
+        return object;
     }
 }

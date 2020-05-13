@@ -1,28 +1,21 @@
 package com.suudupa.coronavirustracker.asyncTask;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.suudupa.coronavirustracker.activity.MainActivity;
+import com.suudupa.coronavirustracker.utility.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-
-import static com.suudupa.coronavirustracker.utility.Resources.REGIONS_FILE;
 
 public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
@@ -66,7 +59,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
         try {
             mainActivityContext.jsonResponse = new JSONObject(json);
-            writeObject(mainActivityContext.getApplicationContext(), filename, json);
+            Utils.writeObject(mainActivityContext.getApplicationContext(), filename, json);
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
@@ -76,6 +69,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        mainActivityContext.dismissNoConnectionMsg();
         getData(region);
     }
 
@@ -85,7 +79,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
         boolean notFound = false;
 
         try {
-            jsonData = (String) readObject(mainActivityContext.getApplicationContext(), filename);
+            jsonData = (String) Utils.readObject(mainActivityContext.getApplicationContext(), filename);
         } catch (IOException | ClassNotFoundException e) {
             notFound = true;
         }
@@ -95,6 +89,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
         }
         else {
             getData(jsonData, region);
+            mainActivityContext.showNoConnectionMsg();
         }
     }
 
@@ -110,9 +105,8 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
     private void getData(String region) {
         mainActivityContext.buildRegionList();
         try {
-            writeObject(mainActivityContext.getApplicationContext(), REGIONS_FILE, MainActivity.regions);
             mainActivityContext.loadData(region);
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -120,46 +114,10 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
     private void getData(String json, String region) {
         try {
             mainActivityContext.jsonResponse = new JSONObject(json);
-            getLatestRegionList();
+            mainActivityContext.buildRegionList();
             mainActivityContext.loadData(region);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    private void getLatestRegionList() {
-        List<String> regionList = null;
-        boolean notFound = false;
-
-        try {
-            regionList = (List<String>) readObject(mainActivityContext.getApplicationContext(), REGIONS_FILE);
-        } catch (IOException | ClassNotFoundException e) {
-            notFound = true;
-        }
-
-        if (notFound || regionList == null) {
-            mainActivityContext.buildRegionList();
-        }
-        else {
-            MainActivity.regions = regionList;
-            mainActivityContext.setupSpinner();
-        }
-    }
-
-    private void writeObject(Context context, String fileName, Object object) throws IOException {
-        FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(object);
-        oos.flush();
-        oos.close();
-        fos.close();
-    }
-
-    private Object readObject(Context context, String fileName) throws IOException, ClassNotFoundException {
-        FileInputStream fis = context.openFileInput(fileName);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        Object object = ois.readObject();
-        fis.close();
-        return object;
     }
 }

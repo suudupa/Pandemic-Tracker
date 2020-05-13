@@ -6,10 +6,22 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@color/colorTextSubtitle</item>
+        <item name="alertDialogTheme">@style/AlertDialogStyle</item>
+
     </style>
 
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textColorAlertDialogListItem">@color/colorTextSubtitle</item>
+        <item name="android:background">@color/colorBackground</item>
+        <item name="android:listChoiceBackgroundIndicator">@color/colorTextSubtitle</item>
+    </style>
 
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash_screen</item>
@@ -17,11 +29,42 @@
 
     </style>
 
-
     <style name="AppTheme.Toolbar" parent="AppTheme">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="backgroundColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="Subtitles">
+        <item name="android:textColor">@color/colorTextSubtitle</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="descriptions">
+        <item name="android:textColor">@color/colorTextSubtitle</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Cases">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="newCases">
+        <item name="android:textColor">@android:color/holo_red_light</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="navigationDrawer">
+        <item name="itemTextColor">@android:color/white</item>
+        <item name="android:activatedBackgroundIndicator">@android:color/transparent</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="Base.Widget.AppCompat.Spinner.Underlined">
+        <item name="android:checkMark">@color/colorAccent</item>
     </style>
 
 </resources>

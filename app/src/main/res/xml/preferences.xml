@@ -19,13 +19,13 @@
             android:defaultValue="@string/language_default_value"
             android:summary="@string/languageText"
             android:key="@string/languageKey" />
-
-        <androidx.preference.SwitchPreferenceCompat
-            android:title="@string/darkModeTitle"
-            android:defaultValue="false"
-            android:summary="@string/darkModeText"
-            android:key="@string/darkModeKey" />
-
+        <!--
+                <androidx.preference.SwitchPreferenceCompat
+                    android:title="@string/darkModeTitle"
+                    android:defaultValue="false"
+                    android:summary="@string/darkModeText"
+                    android:key="@string/darkModeKey" />
+        -->
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

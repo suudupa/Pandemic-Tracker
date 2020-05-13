@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Pandemic Tracker</string>
-    <string name="headlinesTitle">Top Headlines</string>
+    <string name="headlinesTitle">Top Headlines: %1$s</string>
+    <string name="timestampTitle">Last updated: %1$s</string>
     <string name="errorTitle">Oops!</string>
+    <string name="noResultTitle">Uh oh!</string>
     <string name="settingsTitle">Settings</string>
     <string name="aboutTitle">About</string>
     <string name="darkModeTitle">Dark Mode</string>
@@ -13,8 +15,10 @@
     <string name="languageDialogTitle">Select language</string>
     <string name="languageKey">languageKey</string>
 
-    <string name="errorText">No Internet connection found. Check your connection or try again.</string>
+    <string name="errorText">No Internet connection found.\nCheck your connection or try again.</string>
+    <string name="noResultText">No articles found for %1$s.\nThis could be an internal server error or a network failure. \nPlease try again.</string>
     <string name="imageText">No Internet connection</string>
+    <string name="noResultImageText">No articles found</string>
     <string name="retryText">Retry</string>
     <string name="aboutText">"Pandemic Tracker lets you stay up to date with the latest stats and news from around the globe on all pandemics."</string>
     <string name="darkModeText">Switch to dark mode for browsing and reading.</string>
@@ -25,21 +29,24 @@
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
 
-    <string name="cases">Coronavirus Cases:</string>
+    <string name="cases">Cases:</string>
     <string name="deaths">Deaths:</string>
     <string name="recovered">Recovered:</string>
 
     <string-array name="language_titles">
         <item>None</item>
         <item>English</item>
+        <item>Español</item>
         <item>Français</item>
     </string-array>
     <string-array name="language_values">
         <item>""</item>
         <item>en</item>
+        <item>es</item>
         <item>fr</item>
     </string-array>
     <string name="language_default_value">""</string>
     <string name="region_default_value">"World"</string>
+    <string name="article_header_image">Article header image</string>
 
 </resources>

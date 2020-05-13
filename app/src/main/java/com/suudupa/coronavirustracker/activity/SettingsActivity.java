@@ -2,16 +2,13 @@ package com.suudupa.coronavirustracker.activity;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.fragment.PreferencesFragment;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-
-public class SettingsActivity extends AppCompatActivity { //implements NavigationView.OnNavigationItemSelectedListener {
-
-    private DrawerLayout drawer;
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +20,6 @@ public class SettingsActivity extends AppCompatActivity { //implements Navigatio
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //setupDrawer();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -37,32 +33,8 @@ public class SettingsActivity extends AppCompatActivity { //implements Navigatio
         return true;
     }
 
-    /*
-        @Override
-        public boolean onNavigationItemSelected(MenuItem item) {
-            if (item.getItemId() == R.id.homeScreen) {
-                startActivity(new Intent(this, MainActivity.class));
-            }
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
-        }
-
-        private void setupDrawer() {
-            drawer = findViewById(R.id.drawerLayout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
-            NavigationView navigationView = findViewById(R.id.navigationView);
-            navigationView.setNavigationItemSelectedListener(this);
-        }
-    */
     @Override
     public void onBackPressed() {
-        /*
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {*/
         super.onBackPressed();
-        //}
     }
 }

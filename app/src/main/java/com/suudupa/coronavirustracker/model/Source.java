@@ -2,7 +2,7 @@ package com.suudupa.coronavirustracker.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Source {
+public class Source implements java.io.Serializable {
 
     @SerializedName("id")
     private String id;

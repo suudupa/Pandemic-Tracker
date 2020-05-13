@@ -23,7 +23,6 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
                 app:theme="@style/AppTheme.Toolbar" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -42,110 +41,143 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <Spinner
                         android:id="@+id/regionListSpinner"
-                        android:layout_width="320dp"
+                        android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="@android:color/white"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/casesTitleTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/cases"
-                        android:textSize="16sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/regionListSpinner"
-                        app:layout_constraintVertical_bias="0.075" />
-
-                    <TextView
-                        android:id="@+id/casesTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/casesTitleTextView" />
-
-
-                    <TextView
-                        android:id="@+id/deathsTitleTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp"
-                        android:text="@string/deaths"
-                        android:textSize="16sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/casesTextView"
-                        app:layout_constraintVertical_bias="0.15" />
-
-                    <TextView
-                        android:id="@+id/deathsTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/deathsTitleTextView" />
-
-                    <TextView
-                        android:id="@+id/recoveredTitleTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp"
-                        android:text="@string/recovered"
-                        android:textSize="16sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/deathsTextView"
-                        app:layout_constraintVertical_bias="0.20" />
-
-                    <TextView
-                        android:id="@+id/recoveredTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recoveredTitleTextView" />
-
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:dropDownWidth="300dp"
+                        android:layout_gravity="end"
+                        style="@style/SpinnerStyle" />
 
                     <TextView
                         android:id="@+id/timestampTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:gravity="end"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
                         android:textSize="12sp"
+                        android:textColor="@color/colorTextSubtitle"
                         app:fontFamily="sans-serif-light"
-                        app:layout_constraintTop_toBottomOf="@id/recoveredTextView" />
+                        app:layout_constraintTop_toBottomOf="@id/regionListSpinner" />
+
+                    <LinearLayout
+                        android:id="@+id/cases_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        app:layout_constraintTop_toBottomOf="@+id/timestampTextView"
+                        android:baselineAligned="false">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="30dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/casesTitleTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cases"
+                                android:textSize="16sp"
+                                style="@style/Subtitles" />
+
+                            <TextView
+                                android:id="@+id/casesTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                style="@style/Cases" />
+
+                            <TextView
+                                android:id="@+id/newCasesTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15sp"
+                                style="@style/newCases" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="30dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/deathsTitleTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/deaths"
+                                android:textSize="16sp"
+                                style="@style/Subtitles" />
+
+                            <TextView
+                                android:id="@+id/deathsTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                style="@style/Cases" />
+
+                            <TextView
+                                android:id="@+id/newDeathsTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15sp"
+                                style="@style/newCases" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/recoveredTitleTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/recovered"
+                                android:textSize="16sp"
+                                style="@style/Subtitles" />
+
+                            <TextView
+                                android:id="@+id/recoveredTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                app:layout_constraintTop_toBottomOf="@+id/recoveredTitleTextView"
+                                style="@style/Cases" />
+                        </LinearLayout>
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/topHeadlinesTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:gravity="start"
-                        android:text="@string/headlinesTitle"
+                        android:layout_marginTop="30dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:gravity="center"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         app:fontFamily="sans-serif-light"
-                        app:layout_constraintTop_toBottomOf="@id/timestampTextView"
-                        tools:visibility="invisible" />
+                        app:layout_constraintTop_toBottomOf="@id/cases_summary"
+                        style="@style/Subtitles" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
@@ -156,6 +188,59 @@
                         app:layout_constraintTop_toBottomOf="@id/topHeadlinesTextView">
 
                     </androidx.recyclerview.widget.RecyclerView>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/topHeadlinesTextView"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/colorBackground"
+                        android:id="@+id/noResultLayout"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/noResultImage"
+                            android:src="@drawable/ic_no_result"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_centerHorizontal="true"
+                            android:contentDescription="@string/noResultImageText" />
+
+                        <TextView
+                            android:id="@+id/noResultTitle"
+                            android:text="@string/noResultTitle"
+                            android:textColor="@color/colorTextTitle"
+                            android:textStyle="bold"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@id/noResultImage"
+                            android:gravity="center_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/noResultMessage"
+                            android:textColor="@color/colorTextSubtitle"
+                            android:layout_centerHorizontal="true"
+                            android:layout_below="@id/noResultTitle"
+                            android:gravity="center_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <Button
+                            android:id="@+id/noResultBtnRetry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/retryText"
+                            android:background="@color/colorAccent"
+                            android:textColor="#fff"
+                            android:layout_below="@id/noResultMessage"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_centerHorizontal="true" />
+
+                    </RelativeLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -213,7 +298,9 @@
                 android:layout_below="@id/errorMessage"
                 android:layout_marginTop="20dp"
                 android:layout_centerHorizontal="true" />
+
         </RelativeLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -222,9 +309,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="false"
-
         android:layout_marginTop="?android:attr/actionBarSize"
         app:headerLayout="@layout/navigation_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer"
+        style="@style/navigationDrawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
