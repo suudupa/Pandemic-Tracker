@@ -260,16 +260,21 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     articles.clear();
 
                     articles = response.body().getArticles();
+                    if (articles.size() < MIN_ARTICLES) {
+                        if (region.equals(GLOBAL)) {
+                            getArticlesOffline(GLOBAL);
+                            return;
+                        } else {
+                            loadArticles(GLOBAL);
+                        }
+                    }
+
                     if (region.equals(GLOBAL) || region.equals(getFavoriteRegion())) {
                         try {
                             Utils.writeObject(getApplicationContext(), region.toLowerCase() + FILE_FORMAT, articles);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
-
-                    if (articles.size() < MIN_ARTICLES) {
-                        loadArticles(GLOBAL);
                     }
 
                     setArticleListAdapter();
