@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private TextView timestampTextView;
     private TextView topHeadlinesTextView;
     private TextView noResultMsgTextView;
-    private Toolbar toolbar;
     private SwipeRefreshLayout swipeRefresh;
     private SharedPreferences sharedPreferences;
     private Spinner regionList;
@@ -133,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void initializeView() {
-        toolbar = setupToolbar();
         swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent);
@@ -157,23 +154,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         noArticleBtnRetry = findViewById(R.id.noResultBtnRetry);
     }
 
-    private Toolbar setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.toolbarTitle);
-        }
-
-        return toolbar;
-    }
-
     private void setupDrawer() {
         drawer = findViewById(R.id.drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(R.string.toolbarTitle);
+        }
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
