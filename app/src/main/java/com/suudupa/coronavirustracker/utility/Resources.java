@@ -23,7 +23,7 @@ public class Resources {
     private static final String API_KEY_7 = "0ad3f130044e42f6b247149fd3b5b6c7";
     static final String[] API_KEYS = {API_KEY_1, API_KEY_2, API_KEY_3, API_KEY_4, API_KEY_5, API_KEY_6, API_KEY_7};
     public static final String KEYWORD_1 = "coronavirus";
-    public static final String KEYWORD_2 = "covid-19";
+    public static final String KEYWORD_2 = "covid";
     public static final String OR_OP = " OR ";
     public static final String AND_OP = " AND ";
     public static final String SORT_BY = "popularity";

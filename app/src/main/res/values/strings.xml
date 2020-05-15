@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Pandemic Tracker</string>
+    <string name="toolbarTitle">COVID-19 Tracker</string>
     <string name="headlinesTitle">Top Headlines: %1$s</string>
     <string name="timestampTitle">Last updated: %1$s</string>
     <string name="errorTitle">Oops!</string>
@@ -20,7 +21,7 @@
     <string name="imageText">No Internet connection</string>
     <string name="noResultImageText">No articles found</string>
     <string name="retryText">Retry</string>
-    <string name="aboutText">"Pandemic Tracker lets you stay up to date with the latest stats and news from around the globe on all pandemics."</string>
+    <string name="aboutText">"Pandemic Tracker lets you stay up to date with the latest stats and news on COVID-19 from around the globe."</string>
     <string name="darkModeText">Switch to dark mode for browsing and reading.</string>
     <string name="languageText">Set language filter for headlines.</string>
     <string name="favoriteRegionText">Choose which region should be displayed by default on the home screen.</string>

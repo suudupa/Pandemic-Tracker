@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -47,7 +48,29 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.suudupa.coronavirustracker.utility.Resources.*;
+import static com.suudupa.coronavirustracker.utility.Resources.AND_OP;
+import static com.suudupa.coronavirustracker.utility.Resources.AUTHOR;
+import static com.suudupa.coronavirustracker.utility.Resources.CASES;
+import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
+import static com.suudupa.coronavirustracker.utility.Resources.DATE;
+import static com.suudupa.coronavirustracker.utility.Resources.DEATHS;
+import static com.suudupa.coronavirustracker.utility.Resources.FILE_FORMAT;
+import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
+import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
+import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
+import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
+import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
+import static com.suudupa.coronavirustracker.utility.Resources.NEW_CASES;
+import static com.suudupa.coronavirustracker.utility.Resources.NEW_DEATHS;
+import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION;
+import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION_ACTION;
+import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
+import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
+import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
+import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
+import static com.suudupa.coronavirustracker.utility.Resources.TIMESTAMP_KEY;
+import static com.suudupa.coronavirustracker.utility.Resources.TITLE;
+import static com.suudupa.coronavirustracker.utility.Resources.URL;
 import static com.suudupa.coronavirustracker.utility.Utils.getRandomApiKey;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
@@ -62,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private TextView timestampTextView;
     private TextView topHeadlinesTextView;
     private TextView noResultMsgTextView;
+    private Toolbar toolbar;
     private SwipeRefreshLayout swipeRefresh;
     private SharedPreferences sharedPreferences;
     private Spinner regionList;
@@ -109,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void initializeView() {
+        toolbar = setupToolbar();
         swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent);
@@ -130,6 +155,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         btnRetry = findViewById(R.id.btnRetry);
         noArticleLayout = findViewById(R.id.noResultLayout);
         noArticleBtnRetry = findViewById(R.id.noResultBtnRetry);
+    }
+
+    private Toolbar setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.toolbarTitle);
+        }
+
+        return toolbar;
     }
 
     private void setupDrawer() {
