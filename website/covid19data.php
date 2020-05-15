@@ -27,11 +27,11 @@ if ($count > 0) {
 		if (strpos($country->getAttribute('style'), "display: none") === false) {
 
 			$country = $finder->query('td', $country);
-			$data[$country[0]->nodeValue]["cases"] = (trim($country[1]->nodeValue) !== "") ? (int) str_replace(',', '', $country[1]->nodeValue) : 0;
-			$data[$country[0]->nodeValue]["cases_new"] = (trim($country[1]->nodeValue) !== "") ? (int) str_replace(',', '', $country[2]->nodeValue) : 0;
-			$data[$country[0]->nodeValue]["deaths"] = (trim($country[3]->nodeValue) !== "") ? (int) str_replace(',', '', $country[3]->nodeValue) : 0;
-			$data[$country[0]->nodeValue]["deaths_new"] = (trim($country[3]->nodeValue) !== "") ? (int) str_replace(',', '', $country[4]->nodeValue) : 0;
-			$data[$country[0]->nodeValue]["recovered"] = (trim($country[5]->nodeValue) !== "") ? (int) str_replace(',', '', $country[5]->nodeValue) : 0;
+			$data[$country[1]->nodeValue]["cases"] = (trim($country[2]->nodeValue) !== "") ? (int) str_replace(',', '', $country[2]->nodeValue) : 0;
+			$data[$country[1]->nodeValue]["cases_new"] = (trim($country[3]->nodeValue) !== "") ? (int) str_replace(',', '', $country[3]->nodeValue) : 0;
+			$data[$country[1]->nodeValue]["deaths"] = (trim($country[4]->nodeValue) !== "") ? (int) str_replace(',', '', $country[4]->nodeValue) : 0;
+			$data[$country[1]->nodeValue]["deaths_new"] = (trim($country[5]->nodeValue) !== "") ? (int) str_replace(',', '', $country[5]->nodeValue) : 0;
+			$data[$country[1]->nodeValue]["recovered"] = (trim($country[6]->nodeValue) !== "") ? (int) str_replace(',', '', $country[6]->nodeValue) : 0;
 
 		}
 
