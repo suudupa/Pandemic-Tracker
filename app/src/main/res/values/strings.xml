@@ -18,6 +18,7 @@
 
     <string name="errorText">No Internet connection found.\nCheck your connection or try again.</string>
     <string name="noResultText">No articles found for %1$s.\nThis could be an internal server error or a network failure. \nPlease try again.</string>
+    <string name="noResultToast">No articles found for %1$s. Showing Top Headlines for %2$s instead.</string>
     <string name="imageText">No Internet connection</string>
     <string name="noResultImageText">No articles found</string>
     <string name="retryText">Retry</string>

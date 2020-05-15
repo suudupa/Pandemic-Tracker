@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,6 +65,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.NEW_DEATHS;
 import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION;
 import static com.suudupa.coronavirustracker.utility.Resources.NO_CONNECTION_ACTION;
 import static com.suudupa.coronavirustracker.utility.Resources.OR_OP;
+import static com.suudupa.coronavirustracker.utility.Resources.PAGE_SIZE;
 import static com.suudupa.coronavirustracker.utility.Resources.RECOVERED;
 import static com.suudupa.coronavirustracker.utility.Resources.SORT_BY;
 import static com.suudupa.coronavirustracker.utility.Resources.SOURCE;
@@ -271,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
 
         articleListCall = callApi(apiInterface, q);
-        topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
         articleListCall.enqueue(new Callback<ArticleList>() {
 
             @Override
@@ -290,6 +291,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             return;
                         } else {
                             loadArticles(GLOBAL);
+                            Toast.makeText(getApplicationContext(), getString(R.string.noResultToast, region, GLOBAL), Toast.LENGTH_SHORT).show();
+                            return;
                         }
                     }
 
@@ -301,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         }
                     }
 
+                    topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
                     setArticleListAdapter();
                     swipeRefresh.setRefreshing(false);
                     articleSelectedListener();
@@ -344,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             showArticleError(region);
         } else {
             noArticleLayout.setVisibility(View.GONE);
+            topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
             setArticleListAdapter();
             swipeRefresh.setRefreshing(false);
             showNoConnectionMsg();
@@ -385,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void showArticleError(String region) {
+        topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
         setArticleListAdapter();
         noResultMsgTextView.setText(getResources().getString(R.string.noResultText, region));
         makeLayoutVisible(noArticleLayout);
@@ -406,9 +412,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private Call<ArticleList> callApi(ApiInterface apiInterface, String query) {
         if (getFavoriteLanguage().length() == 0) {
-            return apiInterface.getLatestArticles(query, Utils.getDate(), SORT_BY, getRandomApiKey());
+            return apiInterface.getLatestArticles(query, Utils.getDate(), SORT_BY, PAGE_SIZE, getRandomApiKey());
         } else {
-            return apiInterface.getLatestArticles(query, Utils.getDate(), getFavoriteLanguage(), SORT_BY, getRandomApiKey());
+            return apiInterface.getLatestArticles(query, Utils.getDate(), getFavoriteLanguage(), SORT_BY, PAGE_SIZE, getRandomApiKey());
         }
     }
 

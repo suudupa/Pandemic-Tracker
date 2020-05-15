@@ -35,4 +35,5 @@ public class Resources {
     public static final String AUTHOR = "author";
 
     public static final int MIN_ARTICLES = 1;
+    public static final int PAGE_SIZE = 50;
 }
