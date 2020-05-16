@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -113,22 +114,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         executeJsonResponse(getFavoriteRegion());
-
-        regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedRegion = parent.getItemAtPosition(position).toString();
-                try {
-                    loadData(selectedRegion);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
     }
 
     private void initializeView() {
@@ -225,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         executeJsonResponse(getSelectedRegion());
     }
 
-    public void buildRegionList() {
+    public void buildRegionList(String selectedRegion) {
         JSONArray jsonNames = jsonResponse.names();
         regions.clear();
         regionItems.clear();
@@ -239,19 +224,42 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 e.printStackTrace();
             }
         }
-        populateSpinner();
+        populateSpinner(selectedRegion);
     }
 
-    public void populateSpinner() {
-        RegionListAdapter regionListAdapter = new RegionListAdapter(this, regionItems);
+    private void populateSpinner(String selectedRegion) {
+        final RegionListAdapter regionListAdapter = new RegionListAdapter(this, regionItems);
         regionList.setAdapter(regionListAdapter);
         regionListAdapter.notifyDataSetChanged();
+        int position = regions.indexOf(selectedRegion);
+        regionList.setSelection(position);
+        regionList.setTag(position);
+        regionList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!regionList.getTag().equals(position)) {
+                    regionList.setTag(position);
+                    String selectedRegion = parent.getItemAtPosition(position).toString();
+                    try {
+                        swipeRefresh.setRefreshing(true);
+                        loadData(selectedRegion);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
     public void loadData(String region) throws JSONException {
         errorLayout.setVisibility(View.GONE);
         retrieveData(region);
         loadArticles(region);
+        swipeRefresh.setRefreshing(false);
     }
 
     private void retrieveData(String name) throws JSONException {
@@ -263,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         recoveredTextView.setText(Utils.formatNumber(region.getString(RECOVERED)));
         String lastUpdated = Utils.convertUnixTimestamp(jsonResponse.getString(TIMESTAMP_KEY));
         timestampTextView.setText(getResources().getString(R.string.timestampTitle, lastUpdated));
-        regionList.setSelection(regions.indexOf(name));
     }
 
     private void loadArticles(final String region) {
@@ -297,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             getArticlesOffline(GLOBAL, true);
                             return;
                         } else {
+                            Toast.makeText(getApplicationContext(), getString(R.string.noResultToast, region, GLOBAL), Toast.LENGTH_LONG).show();
                             loadArticles(GLOBAL);
                             return;
                         }
@@ -337,7 +345,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         articleListAdapter = new ArticleListAdapter(articles, MainActivity.this);
         recyclerView.setAdapter(articleListAdapter);
         articleListAdapter.notifyDataSetChanged();
-        swipeRefresh.setRefreshing(false);
     }
 
     private void getArticlesOffline(String region, boolean isConnected) {

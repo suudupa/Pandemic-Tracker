@@ -103,7 +103,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
     }
 
     private void getData(String region) {
-        mainActivityContext.buildRegionList();
+        mainActivityContext.buildRegionList(region);
         try {
             mainActivityContext.loadData(region);
         } catch (JSONException e) {
@@ -114,7 +114,7 @@ public class JsonResponse extends AsyncTask<Object, Void, Void> {
     private void getData(String json, String region) {
         try {
             mainActivityContext.jsonResponse = new JSONObject(json);
-            mainActivityContext.buildRegionList();
+            mainActivityContext.buildRegionList(region);
             mainActivityContext.loadData(region);
         } catch (JSONException e) {
             e.printStackTrace();
