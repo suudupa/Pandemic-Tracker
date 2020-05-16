@@ -14,6 +14,7 @@ public interface ApiInterface {
             @Query("q") String keywords,
             @Query("from") String from,
             @Query("sortBy") String sortBy,
+            @Query("pageSize") int pageSize,
             @Query("apiKey") String apiKey
     );
 
@@ -24,6 +25,7 @@ public interface ApiInterface {
             @Query("from") String from,
             @Query("language") String language,
             @Query("sortBy") String sortBy,
+            @Query("pageSize") int pageSize,
             @Query("apiKey") String apiKey
     );
 }
