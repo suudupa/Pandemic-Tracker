@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,28 +77,29 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     public static List<String> regions = new ArrayList<>();
     public JSONObject jsonResponse;
+
+    private SwipeRefreshLayout swipeRefresh;
+    private Spinner regionList;
+    private ArrayList<Region> regionItems = new ArrayList<>();
+    private TextView timestampTextView;
     private TextView casesTextView;
     private TextView newCasesTextView;
     private TextView deathsTextView;
     private TextView newDeathsTextView;
     private TextView recoveredTextView;
-    private TextView timestampTextView;
     private TextView topHeadlinesTextView;
     private TextView noResultMsgTextView;
-    private SwipeRefreshLayout swipeRefresh;
-    private SharedPreferences sharedPreferences;
-    private Spinner regionList;
     private RecyclerView recyclerView;
     private ArticleListAdapter articleListAdapter;
-    private ArrayList<Region> regionItems = new ArrayList<>();
     private List<Article> articles = new ArrayList<>();
-    private DrawerLayout drawer;
-    private NavigationView navigationView;
-    Snackbar noConnectionSnackBar;
     private RelativeLayout errorLayout;
     private RelativeLayout noArticleLayout;
     private Button btnRetry;
     private Button noArticleBtnRetry;
+    private Snackbar noConnectionSnackBar;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedRegion = parent.getItemAtPosition(position).toString();
                 try {
-                    swipeRefresh.setRefreshing(true);
                     loadData(selectedRegion);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -136,25 +135,26 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent);
+        regionList = findViewById(R.id.regionListSpinner);
+        timestampTextView = findViewById(R.id.timestampTextView);
         casesTextView = findViewById(R.id.casesTextView);
         newCasesTextView = findViewById(R.id.newCasesTextView);
         deathsTextView = findViewById(R.id.deathsTextView);
         newDeathsTextView = findViewById(R.id.newDeathsTextView);
         recoveredTextView = findViewById(R.id.recoveredTextView);
-        timestampTextView = findViewById(R.id.timestampTextView);
         topHeadlinesTextView = findViewById(R.id.topHeadlinesTextView);
         noResultMsgTextView = findViewById(R.id.noResultMessage);
-        regionList = findViewById(R.id.regionListSpinner);
         recyclerView = findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
         errorLayout = findViewById(R.id.errorLayout);
-        btnRetry = findViewById(R.id.btnRetry);
         noArticleLayout = findViewById(R.id.noResultLayout);
+        btnRetry = findViewById(R.id.btnRetry);
         noArticleBtnRetry = findViewById(R.id.noResultBtnRetry);
     }
+
 
     private void setupDrawer() {
         drawer = findViewById(R.id.drawerLayout);
@@ -195,9 +195,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
+
     private String getFavoriteRegion() {
         return sharedPreferences.getString(getString(R.string.favoriteRegionKey), GLOBAL);
     }
+
+    private String getFavoriteLanguage() {
+        return sharedPreferences.getString(getString(R.string.languageKey), "");
+    }
+
 
     private String getSelectedRegion() {
         String selectedRegion;
@@ -209,13 +215,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         return selectedRegion;
     }
 
-    private String getFavoriteLanguage() {
-        return sharedPreferences.getString(getString(R.string.languageKey), "");
-    }
-
     private void executeJsonResponse(String region) {
         swipeRefresh.setRefreshing(true);
         new JsonResponse().execute(DATA_URL, this, region);
+    }
+
+    @Override
+    public void onRefresh() {
+        executeJsonResponse(getSelectedRegion());
     }
 
     public void buildRegionList() {
@@ -232,10 +239,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 e.printStackTrace();
             }
         }
-        setupSpinner();
+        populateSpinner();
     }
 
-    public void setupSpinner() {
+    public void populateSpinner() {
         RegionListAdapter regionListAdapter = new RegionListAdapter(this, regionItems);
         regionList.setAdapter(regionListAdapter);
         regionListAdapter.notifyDataSetChanged();
@@ -245,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         errorLayout.setVisibility(View.GONE);
         retrieveData(region);
         loadArticles(region);
-        swipeRefresh.setRefreshing(false);
     }
 
     private void retrieveData(String name) throws JSONException {
@@ -273,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
 
         articleListCall = callApi(apiInterface, q);
+        topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
         articleListCall.enqueue(new Callback<ArticleList>() {
 
             @Override
@@ -287,11 +294,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     articles = response.body().getArticles();
                     if (articles.size() < MIN_ARTICLES) {
                         if (region.equals(GLOBAL)) {
-                            getArticlesOffline(GLOBAL);
+                            getArticlesOffline(GLOBAL, true);
                             return;
                         } else {
                             loadArticles(GLOBAL);
-                            Toast.makeText(getApplicationContext(), getString(R.string.noResultToast, region, GLOBAL), Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
@@ -304,35 +310,37 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         }
                     }
 
-                    topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
                     setArticleListAdapter();
-                    swipeRefresh.setRefreshing(false);
                     articleSelectedListener();
 
                 } else {
-                    getArticlesOffline(region);
+                    getArticlesOffline(region, true);
                 }
             }
 
             @Override
             public void onFailure(Call<ArticleList> call, Throwable t) {
-                getArticlesOffline(region);
+                getArticlesOffline(region, false);
             }
         });
     }
 
-    @Override
-    public void onRefresh() {
-        executeJsonResponse(getSelectedRegion());
+    private Call<ArticleList> callApi(ApiInterface apiInterface, String query) {
+        if (getFavoriteLanguage().length() == 0) {
+            return apiInterface.getLatestArticles(query, Utils.getDate(), SORT_BY, PAGE_SIZE, getRandomApiKey());
+        } else {
+            return apiInterface.getLatestArticles(query, Utils.getDate(), getFavoriteLanguage(), SORT_BY, PAGE_SIZE, getRandomApiKey());
+        }
     }
 
     private void setArticleListAdapter() {
         articleListAdapter = new ArticleListAdapter(articles, MainActivity.this);
         recyclerView.setAdapter(articleListAdapter);
         articleListAdapter.notifyDataSetChanged();
+        swipeRefresh.setRefreshing(false);
     }
 
-    private void getArticlesOffline(String region) {
+    private void getArticlesOffline(String region, boolean isConnected) {
         boolean notFound = false;
         articles.clear();
 
@@ -348,10 +356,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             showArticleError(region);
         } else {
             noArticleLayout.setVisibility(View.GONE);
-            topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
             setArticleListAdapter();
-            swipeRefresh.setRefreshing(false);
-            showNoConnectionMsg();
+            if(!isConnected) {
+                showNoConnectionMsg();
+            }
             articleSelectedListener();
         }
     }
@@ -390,7 +398,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void showArticleError(String region) {
-        topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
         setArticleListAdapter();
         noResultMsgTextView.setText(getResources().getString(R.string.noResultText, region));
         makeLayoutVisible(noArticleLayout);
@@ -407,14 +414,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefresh.setRefreshing(false);
         if (relativeLayout.getVisibility() == View.GONE) {
             relativeLayout.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private Call<ArticleList> callApi(ApiInterface apiInterface, String query) {
-        if (getFavoriteLanguage().length() == 0) {
-            return apiInterface.getLatestArticles(query, Utils.getDate(), SORT_BY, PAGE_SIZE, getRandomApiKey());
-        } else {
-            return apiInterface.getLatestArticles(query, Utils.getDate(), getFavoriteLanguage(), SORT_BY, PAGE_SIZE, getRandomApiKey());
         }
     }
 
