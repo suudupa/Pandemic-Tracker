@@ -20,7 +20,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
         setupFavoriteRegionPreference();
-        setupLanguagePreference();
     }
 
     private void setupFavoriteRegionPreference() {
@@ -37,19 +36,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 showToast(getCorrespondingEntry((ListPreference) preference, (String) newValue));
                 preference.setSummary(getString(R.string.favoriteRegionText) + " Current selection: %s");
-                return true;
-            }
-        });
-    }
-
-    private void setupLanguagePreference() {
-        final ListPreference languagePreference = findPreference(getString(R.string.languageKey));
-        languagePreference.setSummary(getString(R.string.languageText) + " Current selection: %s");
-        languagePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                showToast(getCorrespondingEntry((ListPreference) preference, (String) newValue));
-                preference.setSummary(getString(R.string.languageText) + " Current selection: %s");
                 return true;
             }
         });

@@ -26,6 +26,7 @@ public class Resources {
     public static final String KEYWORD_2 = "covid";
     public static final String OR_OP = " OR ";
     public static final String AND_OP = " AND ";
+    public static final String ENGLISH = "en";
     public static final String SORT_BY = "popularity";
     public static final String URL = "url";
     public static final String TITLE = "title";

@@ -54,6 +54,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.CASES;
 import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
 import static com.suudupa.coronavirustracker.utility.Resources.DATE;
 import static com.suudupa.coronavirustracker.utility.Resources.DEATHS;
+import static com.suudupa.coronavirustracker.utility.Resources.ENGLISH;
 import static com.suudupa.coronavirustracker.utility.Resources.FILE_FORMAT;
 import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
@@ -183,10 +184,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private String getFavoriteRegion() {
         return sharedPreferences.getString(getString(R.string.favoriteRegionKey), GLOBAL);
-    }
-
-    private String getFavoriteLanguage() {
-        return sharedPreferences.getString(getString(R.string.languageKey), "");
     }
 
 
@@ -334,11 +331,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private Call<ArticleList> callApi(ApiInterface apiInterface, String query) {
-        if (getFavoriteLanguage().length() == 0) {
-            return apiInterface.getLatestArticles(query, Utils.getDate(), SORT_BY, PAGE_SIZE, getRandomApiKey());
-        } else {
-            return apiInterface.getLatestArticles(query, Utils.getDate(), getFavoriteLanguage(), SORT_BY, PAGE_SIZE, getRandomApiKey());
-        }
+        return apiInterface.getLatestArticles(query, Utils.getDate(), ENGLISH, SORT_BY, PAGE_SIZE, getRandomApiKey());
     }
 
     private void setArticleListAdapter() {
