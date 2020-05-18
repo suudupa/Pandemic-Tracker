@@ -5,4 +5,3 @@ Pandemic Tracker is an Android application (written in Java) that lets you stay 
 
 To download the app on your Android device, go to app/release/app-release.apk
 
-![image](https://rahulkaranth.com/assets/images/pandemic_tracker.jpg)
