@@ -11,21 +11,6 @@
             android:summary="@string/favoriteRegionText"
             android:key="@string/favoriteRegionKey" />
 
-        <ListPreference
-            android:title="@string/languageTitle"
-            android:dialogTitle="@string/languageDialogTitle"
-            android:entries="@array/language_titles"
-            android:entryValues="@array/language_values"
-            android:defaultValue="@string/language_default_value"
-            android:summary="@string/languageText"
-            android:key="@string/languageKey" />
-        <!--
-                <androidx.preference.SwitchPreferenceCompat
-                    android:title="@string/darkModeTitle"
-                    android:defaultValue="false"
-                    android:summary="@string/darkModeText"
-                    android:key="@string/darkModeKey" />
-        -->
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>
