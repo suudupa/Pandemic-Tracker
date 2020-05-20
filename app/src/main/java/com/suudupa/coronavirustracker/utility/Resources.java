@@ -24,10 +24,11 @@ public class Resources {
     static final String[] API_KEYS = {API_KEY_1, API_KEY_2, API_KEY_3, API_KEY_4, API_KEY_5, API_KEY_6, API_KEY_7};
     public static final String KEYWORD_1 = "coronavirus";
     public static final String KEYWORD_2 = "covid";
+    public static final String KEYWORD_3 = "pandemic";
     public static final String OR_OP = " OR ";
     public static final String AND_OP = " AND ";
     public static final String ENGLISH = "en";
-    public static final String SORT_BY = "popularity";
+    public static final String SORT_BY = "relevancy";
     public static final String URL = "url";
     public static final String TITLE = "title";
     public static final String IMAGE = "img";
@@ -36,5 +37,5 @@ public class Resources {
     public static final String AUTHOR = "author";
 
     public static final int MIN_ARTICLES = 1;
-    public static final int PAGE_SIZE = 30;
+    public static final int PAGE_SIZE = 35;
 }
