@@ -46,11 +46,6 @@ public class Utils {
         return API_KEYS[index];
     }
 
-    private static String getCountry() {
-        Locale locale = Locale.getDefault();
-        return locale.getCountry().toLowerCase();
-    }
-
     public static String getDate() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
@@ -70,7 +65,7 @@ public class Utils {
     }
 
     public static String formatDateTime (String dateString) {
-        PrettyTime p = new PrettyTime(new Locale(getCountry()));
+        PrettyTime p = new PrettyTime(Locale.getDefault());
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             Date date = simpleDateFormat.parse(dateString);
