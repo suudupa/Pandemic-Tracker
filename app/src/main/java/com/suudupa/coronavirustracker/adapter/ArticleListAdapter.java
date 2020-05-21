@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -20,11 +24,9 @@ import com.suudupa.coronavirustracker.R;
 import com.suudupa.coronavirustracker.model.Article;
 import com.suudupa.coronavirustracker.utility.Utils;
 
-import java.util.List;
+import org.jsoup.Jsoup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+import java.util.List;
 
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.MyViewHolder> {
 
@@ -75,7 +77,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
                 .into(holder.imageView);
 
         holder.title.setText(article.getTitle());
-        holder.description.setText(article.getDescription());
+        holder.description.setText(Jsoup.parse(article.getDescription()).text());
         holder.source.setText(article.getSource().getName());
         holder.time.setText(" \u2022 " + Utils.formatDateTime(article.getPublishedAt()));
         holder.publishedAt.setText(Utils.formatDate(article.getPublishedAt()));

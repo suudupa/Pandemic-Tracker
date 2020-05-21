@@ -9,7 +9,18 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
     @GET("everything")
-    Call<ArticleList> getLatestArticles(
+    Call<ArticleList> getWorldArticles(
+
+            @Query("qInTitle") String keywords,
+            @Query("from") String from,
+            @Query("language") String language,
+            @Query("sortBy") String sortBy,
+            @Query("pageSize") int pageSize,
+            @Query("apiKey") String apiKey
+    );
+
+    @GET("everything")
+    Call<ArticleList> getRegionArticles(
 
             @Query("q") String keywords,
             @Query("from") String from,

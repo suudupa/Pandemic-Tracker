@@ -60,6 +60,7 @@ import static com.suudupa.coronavirustracker.utility.Resources.GLOBAL;
 import static com.suudupa.coronavirustracker.utility.Resources.IMAGE;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_1;
 import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_2;
+import static com.suudupa.coronavirustracker.utility.Resources.KEYWORD_3;
 import static com.suudupa.coronavirustracker.utility.Resources.MIN_ARTICLES;
 import static com.suudupa.coronavirustracker.utility.Resources.NEW_CASES;
 import static com.suudupa.coronavirustracker.utility.Resources.NEW_DEATHS;
@@ -275,14 +276,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final Call<ArticleList> articleListCall;
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
         String q;
+        boolean isGlobal = false;
 
         if (region.equals(GLOBAL)) {
-            q = Utils.urlEncode(KEYWORD_1 + OR_OP + KEYWORD_2);
+            q = KEYWORD_1 + OR_OP + KEYWORD_2 + OR_OP + KEYWORD_3;
+            isGlobal = true;
         } else {
-            q = Utils.urlEncode(KEYWORD_1 + AND_OP + region);
+            q = "(" + KEYWORD_1 + OR_OP + KEYWORD_2 + OR_OP + KEYWORD_3 + ")" + AND_OP + region;
         }
 
-        articleListCall = callApi(apiInterface, q);
+        articleListCall = callApi(apiInterface, q, isGlobal);
         topHeadlinesTextView.setText(getResources().getString(R.string.headlinesTitle, region));
         articleListCall.enqueue(new Callback<ArticleList>() {
 
@@ -330,8 +333,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
 
-    private Call<ArticleList> callApi(ApiInterface apiInterface, String query) {
-        return apiInterface.getLatestArticles(query, Utils.getDate(), ENGLISH, SORT_BY, PAGE_SIZE, getRandomApiKey());
+    private Call<ArticleList> callApi(ApiInterface apiInterface, String query, boolean isGlobal) {
+        if (isGlobal) {
+            return apiInterface.getWorldArticles(query, Utils.getDate(), ENGLISH, SORT_BY, PAGE_SIZE, getRandomApiKey());
+        } else {
+            return apiInterface.getRegionArticles(query, Utils.getDate(), ENGLISH, SORT_BY, PAGE_SIZE, getRandomApiKey());
+        }
     }
 
     private void setArticleListAdapter() {

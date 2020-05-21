@@ -11,8 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,11 +46,6 @@ public class Utils {
         return API_KEYS[index];
     }
 
-    private static String getCountry() {
-        Locale locale = Locale.getDefault();
-        return locale.getCountry().toLowerCase();
-    }
-
     public static String getDate() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
@@ -72,9 +65,9 @@ public class Utils {
     }
 
     public static String formatDateTime (String dateString) {
-        PrettyTime p = new PrettyTime();
+        PrettyTime p = new PrettyTime(Locale.getDefault());
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", new Locale(getCountry()));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             Date date = simpleDateFormat.parse(dateString);
             return p.format(date);
         } catch (ParseException e) {
@@ -99,14 +92,6 @@ public class Utils {
         int number = Integer.parseInt(value);
         if (number == 0) { return ""; }
         else { return op + String.format("%,d", number); }
-    }
-
-    public static String urlEncode(String query) {
-        try {
-            return URLEncoder.encode(query, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getCause());
-        }
     }
 
     public static void sortAlphabetical (List<String> regionsList) {
