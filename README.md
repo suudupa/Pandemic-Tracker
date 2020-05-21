@@ -7,13 +7,13 @@
 
 ***
 
-**Screenshots:**
+### Screenshots:
 
 ![image](https://user-images.githubusercontent.com/22065101/82318793-7381f280-999e-11ea-8e9e-e911122d1885.jpg)
 
 ***
 
-**Project Overview:**
+### Project Overview:
 
 • Stats taken from Worldometer (https://www.worldometers.info/coronavirus/) - real time world statistics;  
 • News headlines fetched from News API (https://newsapi.org/) - API that returns JSON metadata for live headlines and articles from around the world;  
