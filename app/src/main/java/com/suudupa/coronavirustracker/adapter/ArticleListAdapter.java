@@ -26,7 +26,10 @@ import com.suudupa.coronavirustracker.utility.Utils;
 
 import org.jsoup.Jsoup;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.MyViewHolder> {
 
@@ -79,8 +82,24 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         holder.title.setText(article.getTitle());
         holder.description.setText(Jsoup.parse(article.getDescription()).text());
         holder.source.setText(article.getSource().getName());
-        holder.time.setText(" \u2022 " + Utils.formatDateTime(article.getPublishedAt()));
-        holder.publishedAt.setText(Utils.formatDate(article.getPublishedAt()));
+
+        String convertedDate = "";
+        //convert publishedAt date/time to local timezone
+        try {
+            String dateString = article.getPublishedAt();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = sdf.parse(dateString);
+            sdf.setTimeZone(TimeZone.getDefault());
+            convertedDate = sdf.format(date);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        holder.time.setText(" \u2022 " + Utils.formatDateTime(convertedDate));
+        holder.publishedAt.setText(Utils.formatDate(convertedDate));
         holder.author.setText(article.getAuthor());
     }
 
