@@ -77,10 +77,14 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
                 .into(holder.imageView);
 
         holder.title.setText(article.getTitle());
-        holder.description.setText(Jsoup.parse(article.getDescription()).text());
+        try {
+            holder.description.setText(Jsoup.parse(article.getDescription()).text());
+        } catch (NullPointerException e) {
+            holder.description.setText(article.getDescription());
+        }
         holder.source.setText(article.getSource().getName());
-        holder.time.setText(" \u2022 " + Utils.formatDateTime(article.getPublishedAt()));
-        holder.publishedAt.setText(Utils.formatDate(article.getPublishedAt()));
+        holder.time.setText(" \u2022 " + Utils.formatDateTime(Utils.convertUtcToLocalTime(article.getPublishedAt())));
+        holder.publishedAt.setText(Utils.formatDate(Utils.convertUtcToLocalTime(article.getPublishedAt())));
         holder.author.setText(article.getAuthor());
     }
 
