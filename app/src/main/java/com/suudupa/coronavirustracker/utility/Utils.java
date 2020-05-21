@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.TimeZone;
 
 import static com.suudupa.coronavirustracker.utility.Resources.API_KEYS;
 
@@ -74,6 +75,20 @@ public class Utils {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public static String convertUtcToLocalTime(String utcTime) {
+        String convertedDate = "";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = sdf.parse(utcTime);
+            sdf.setTimeZone(TimeZone.getDefault());
+            convertedDate = sdf.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return convertedDate;
     }
 
     public static String convertUnixTimestamp (String timestamp) {

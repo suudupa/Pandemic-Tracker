@@ -26,10 +26,7 @@ import com.suudupa.coronavirustracker.utility.Utils;
 
 import org.jsoup.Jsoup;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.MyViewHolder> {
 
@@ -80,26 +77,14 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
                 .into(holder.imageView);
 
         holder.title.setText(article.getTitle());
-        holder.description.setText(Jsoup.parse(article.getDescription()).text());
-        holder.source.setText(article.getSource().getName());
-
-        String convertedDate = "";
-        //convert publishedAt date/time to local timezone
         try {
-            String dateString = article.getPublishedAt();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sdf.parse(dateString);
-            sdf.setTimeZone(TimeZone.getDefault());
-            convertedDate = sdf.format(date);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            holder.description.setText(Jsoup.parse(article.getDescription()).text());
+        } catch (NullPointerException e) {
+            holder.description.setText(article.getDescription());
         }
-
-
-        holder.time.setText(" \u2022 " + Utils.formatDateTime(convertedDate));
-        holder.publishedAt.setText(Utils.formatDate(convertedDate));
+        holder.source.setText(article.getSource().getName());
+        holder.time.setText(" \u2022 " + Utils.formatDateTime(Utils.convertUtcToLocalTime(article.getPublishedAt())));
+        holder.publishedAt.setText(Utils.formatDate(Utils.convertUtcToLocalTime(article.getPublishedAt())));
         holder.author.setText(article.getAuthor());
     }
 
