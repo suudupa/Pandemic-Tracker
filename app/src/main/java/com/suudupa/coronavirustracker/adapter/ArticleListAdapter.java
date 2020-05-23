@@ -81,12 +81,10 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             holder.description.setText(Jsoup.parse(article.getDescription()).text());
         } catch (NullPointerException e) {
             holder.description.setText(R.string.no_description);
-            //holder.description.setText(article.getDescription());
         }
         holder.source.setText(article.getSource().getName());
         holder.time.setText(" \u2022 " + Utils.formatDateTime(Utils.convertUtcToLocalTime(article.getPublishedAt())));
         holder.publishedAt.setText(Utils.formatDate(Utils.convertUtcToLocalTime(article.getPublishedAt())));
-        holder.author.setText(article.getAuthor());
     }
 
     @Override
@@ -104,7 +102,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView title, description, author, publishedAt, source, time;
+        TextView title, description, publishedAt, source, time;
         ImageView imageView;
         OnItemClickListener onItemClickListener;
 
@@ -114,7 +112,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             itemView.setOnClickListener(this);
             title = itemView.findViewById(R.id.title);
             description = itemView.findViewById(R.id.description);
-            author = itemView.findViewById(R.id.author);
             publishedAt = itemView.findViewById(R.id.publishedAt);
             source = itemView.findViewById(R.id.source);
             time = itemView.findViewById(R.id.time);
