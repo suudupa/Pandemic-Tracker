@@ -15,7 +15,7 @@
 
 ### Project Overview:
 
-• Stats taken from Worldometer (https://www.worldometers.info/coronavirus/) - real time world statistics;  
+• Real time statistics parsed from Worldometer (https://www.worldometers.info/coronavirus/) using PHP and stored in a JSON file on the server (https://pandemictracker.rahulkaranth.com/covid19data.json), which is fetched using AsyncTasks on the client side;  
 • News headlines fetched from News API (https://newsapi.org/) - API that returns JSON metadata for live headlines and articles from around the world;  
 • Uses Retrofit - REST Client for Java and Android;  
 • Uses Glide - image loading and caching library for Android;  

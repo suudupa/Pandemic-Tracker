@@ -49,7 +49,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.suudupa.coronavirustracker.utility.Resources.AND_OP;
-import static com.suudupa.coronavirustracker.utility.Resources.AUTHOR;
 import static com.suudupa.coronavirustracker.utility.Resources.CASES;
 import static com.suudupa.coronavirustracker.utility.Resources.DATA_URL;
 import static com.suudupa.coronavirustracker.utility.Resources.DATE;
@@ -386,7 +385,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 intent.putExtra(IMAGE, article.getUrlToImage());
                 intent.putExtra(DATE, article.getPublishedAt());
                 intent.putExtra(SOURCE, article.getSource().getName());
-                intent.putExtra(AUTHOR, article.getAuthor());
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in, android.R.anim.fade_out);

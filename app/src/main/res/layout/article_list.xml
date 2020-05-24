@@ -32,19 +32,6 @@
             android:background="@drawable/bottom_shadow">
 
             <TextView
-                android:id="@+id/author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:gravity="bottom"
-                android:textColor="@android:color/white"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/publishedAt"
-                android:layout_alignParentBottom="true" />
-
-            <TextView
                 android:id="@+id/publishedAt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
